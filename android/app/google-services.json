@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "414078561802",
+    "project_id": "upturn-dashboard",
+    "storage_bucket": "upturn-dashboard.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:414078561802:android:d02d1c5629dac19f2a79f3",
+        "android_client_info": {
+          "package_name": "com.example.upturn_dashboard"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCdpJvGOt144gt3_N93D0zw7HytEu_28Tw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:414078561802:android:010dd05b8792b2ae2a79f3",
+        "android_client_info": {
+          "package_name": "com.nexity.studays"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCdpJvGOt144gt3_N93D0zw7HytEu_28Tw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
