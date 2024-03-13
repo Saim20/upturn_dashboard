@@ -4,7 +4,7 @@ import 'package:upturn_dashboard/functions/responsiveness.dart';
 import 'package:upturn_dashboard/provider/data_provider.dart';
 import 'package:upturn_dashboard/widgets/expense_row.dart';
 
-import '../provider/expense_rows_provider.dart';
+import '../../provider/expense_rows_provider.dart';
 
 class ExpenseEntryPage extends StatefulWidget {
   const ExpenseEntryPage({super.key});

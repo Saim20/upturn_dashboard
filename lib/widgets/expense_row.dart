@@ -80,7 +80,7 @@ class _ExpenseRowState extends State<ExpenseRow> {
               ),
               validator: (value) {
                 if (value == null || value.isEmpty) {
-                  return 'Please enter a date';
+                  return 'Please select a date';
                 }
                 return null;
               },

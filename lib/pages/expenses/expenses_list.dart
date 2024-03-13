@@ -3,14 +3,14 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:upturn_dashboard/functions/date_time_converters.dart';
 
-class ExpenseTablePage extends StatefulWidget {
-  const ExpenseTablePage({super.key});
+class ExpenseListPage extends StatefulWidget {
+  const ExpenseListPage({super.key});
 
   @override
-  State<ExpenseTablePage> createState() => _ExpenseTablePageState();
+  State<ExpenseListPage> createState() => _ExpenseListPageState();
 }
 
-class _ExpenseTablePageState extends State<ExpenseTablePage> {
+class _ExpenseListPageState extends State<ExpenseListPage> {
   DateTime selectedDate = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
 
   bool getData = false;
@@ -126,8 +126,9 @@ class _FilterState extends State<Filter> {
         padding: const EdgeInsets.all(8.0),
         child: TextFormField(
           decoration: const InputDecoration(
-            labelText: 'Date',
+            labelText: 'Expense from',
           ),
+          
           onTap: () async {
             FocusScope.of(context).requestFocus(FocusNode());
             final DateTime? picked = await showDatePicker(
@@ -150,7 +151,7 @@ class _FilterState extends State<Filter> {
           ),
           validator: (value) {
             if (value == null || value.isEmpty) {
-              return 'Please enter a date';
+              return 'Please select a date';
             }
             return null;
           },

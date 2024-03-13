@@ -4,7 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:upturn_dashboard/data/expense_row_data.dart';
 
-class ExpenseRowsProvider extends ChangeNotifier {
+class ExpenseRowsProvider with ChangeNotifier {
   final List<ExpenseRowData> _expenseRows = [
     ExpenseRowData(),
   ];

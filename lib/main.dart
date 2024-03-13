@@ -13,10 +13,10 @@ SystemUiOverlayStyle systemUiOverlayStyle = const SystemUiOverlayStyle(
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-
   setPathUrlStrategy();
 
   runApp(
