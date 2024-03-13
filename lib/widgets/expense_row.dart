@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:upturn_dashboard/functions/responsiveness.dart';
 import 'package:upturn_dashboard/provider/data_provider.dart';
 import 'package:upturn_dashboard/provider/expense_rows_provider.dart';
 
@@ -46,169 +47,155 @@ class _ExpenseRowState extends State<ExpenseRow> {
         .cashAmount
         .toString();
 
-    return Row(
-      children: [
-        SizedBox(
-          width: 200,
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: TextFormField(
-              decoration: const InputDecoration(
-                labelText: 'Date',
-              ),
-              onTap: () async {
-                FocusScope.of(context).requestFocus(FocusNode());
-                final DateTime? picked = await showDatePicker(
-                  context: context,
-                  initialDate: _selectedDate ?? DateTime.now(),
-                  firstDate: DateTime(2023),
-                  lastDate: DateTime.now(),
-                );
-                if (picked != null && picked != _selectedDate) {
-                  setState(() {
-                    context
-                        .read<ExpenseRowsProvider>()
-                        .expenseRows[widget.id]
-                        .selectedDate = picked;
-                  });
-                }
-              },
-              controller: TextEditingController(
-                text: _selectedDate == null
-                    ? ''
-                    : formattedDate(_selectedDate!),
-              ),
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please select a date';
-                }
-                return null;
-              },
+    List<Widget> contents = [
+      SizedBox(
+        width: isWideScreen(context) ? 200 : null,
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: TextFormField(
+            decoration: const InputDecoration(
+              labelText: 'Date',
             ),
-          ),
-        ),
-        
-        SizedBox(
-          width: 320,
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: DropdownButtonFormField<String>(
-              decoration: const InputDecoration(
-                labelText: 'Expense Item',
-              ),
-              items:
-                  context.watch<DataProvider>().expenseItems.map((String item) {
-                return DropdownMenuItem<String>(
-                  value: item,
-                  child: Text(item),
-                );
-              }).toList(),
-              onChanged: (String? newValue) {
+            onTap: () async {
+              FocusScope.of(context).requestFocus(FocusNode());
+              final DateTime? picked = await showDatePicker(
+                context: context,
+                initialDate: _selectedDate ?? DateTime.now(),
+                firstDate: DateTime(2023),
+                lastDate: DateTime.now(),
+              );
+              if (picked != null && picked != _selectedDate) {
                 setState(() {
                   context
                       .read<ExpenseRowsProvider>()
                       .expenseRows[widget.id]
-                      .expenseItem = newValue;
-                  log(context
-                      .read<ExpenseRowsProvider>()
-                      .expenseRows[widget.id]
-                      .expenseItem
-                      .toString());
+                      .selectedDate = picked;
                 });
-              },
-              value: _expenseItem,
-              validator: (String? value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please select an expense item';
-                }
-                return null;
-              },
+              }
+            },
+            controller: TextEditingController(
+              text: _selectedDate == null ? '' : formattedDate(_selectedDate!),
             ),
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Please select a date';
+              }
+              return null;
+            },
           ),
         ),
-        SizedBox(
-          width: 240,
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: DropdownButtonFormField<String>(
-              decoration: const InputDecoration(
-                labelText: 'Payment Method',
-              ),
-              items: context
-                  .watch<DataProvider>()
-                  .paymentMethods
-                  .map((String item) {
-                return DropdownMenuItem<String>(
-                  value: item,
-                  child: Text(item),
-                );
-              }).toList(),
-              onChanged: (String? newValue) {
-                setState(() {
-                  context
-                      .read<ExpenseRowsProvider>()
-                      .expenseRows[widget.id]
-                      .paymentMethod = newValue;
-                  log(context
-                      .read<ExpenseRowsProvider>()
-                      .expenseRows[widget.id]
-                      .paymentMethod
-                      .toString());
-                });
-              },
-              value: _paymentMethod,
-              validator: (String? value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please select a payment method';
-                }
-                return null;
-              },
+      ),
+      SizedBox(
+        width: isWideScreen(context) ? 320 : null,
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: DropdownButtonFormField<String>(
+            decoration: const InputDecoration(
+              labelText: 'Expense Item',
             ),
-          ),
-        ),
-        SizedBox(
-          width: 240,
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: TextFormField(
-              decoration: const InputDecoration(
-                labelText: 'Cash Amount',
-              ),
-              controller: cashController,
-              keyboardType: TextInputType.number,
-              inputFormatters: <TextInputFormatter>[
-                FilteringTextInputFormatter.digitsOnly
-              ],
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please enter a cash amount';
-                }
-                return null;
-              },
-              onChanged: (String? newValue) {
+            items:
+                context.watch<DataProvider>().expenseItems.map((String item) {
+              return DropdownMenuItem<String>(
+                value: item,
+                child: Text(item),
+              );
+            }).toList(),
+            onChanged: (String? newValue) {
+              setState(() {
                 context
                     .read<ExpenseRowsProvider>()
                     .expenseRows[widget.id]
-                    .cashAmount = int.parse(newValue!);
-                log(context
+                    .expenseItem = newValue;
+              });
+            },
+            value: _expenseItem,
+            validator: (String? value) {
+              if (value == null || value.isEmpty) {
+                return 'Please select an expense item';
+              }
+              return null;
+            },
+          ),
+        ),
+      ),
+      SizedBox(
+        width: isWideScreen(context) ? 240 : null,
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: DropdownButtonFormField<String>(
+            decoration: const InputDecoration(
+              labelText: 'Payment Method',
+            ),
+            items:
+                context.watch<DataProvider>().paymentMethods.map((String item) {
+              return DropdownMenuItem<String>(
+                value: item,
+                child: Text(item),
+              );
+            }).toList(),
+            onChanged: (String? newValue) {
+              setState(() {
+                context
                     .read<ExpenseRowsProvider>()
                     .expenseRows[widget.id]
-                    .cashAmount
-                    .toString());
-              },
-            ),
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: ElevatedButton(
-            onPressed: () {
-              context.read<ExpenseRowsProvider>().removeExpenseRow(widget.id);
+                    .paymentMethod = newValue;
+              });
             },
-            child: const Icon(Icons.remove_circle_outline),
+            value: _paymentMethod,
+            validator: (String? value) {
+              if (value == null || value.isEmpty) {
+                return 'Please select a payment method';
+              }
+              return null;
+            },
           ),
         ),
-      ],
-    );
+      ),
+      SizedBox(
+        width: isWideScreen(context) ? 240 : null,
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: TextFormField(
+            decoration: const InputDecoration(
+              labelText: 'Cash Amount',
+            ),
+            controller: cashController,
+            keyboardType: TextInputType.number,
+            inputFormatters: <TextInputFormatter>[
+              FilteringTextInputFormatter.digitsOnly
+            ],
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Please enter a cash amount';
+              }
+              return null;
+            },
+            onChanged: (String? newValue) {
+              context
+                  .read<ExpenseRowsProvider>()
+                  .expenseRows[widget.id]
+                  .cashAmount = int.parse(newValue!);
+            },
+          ),
+        ),
+      ),
+      Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: ElevatedButton(
+          onPressed: () {
+            context.read<ExpenseRowsProvider>().removeExpenseRow(widget.id);
+          },
+          child: const Icon(Icons.remove_circle_outline),
+        ),
+      ),
+    ];
+
+    return isWideScreen(context)
+        ? Row(
+            children: contents,
+          )
+        : Column(
+            children: contents,
+          );
   }
 }

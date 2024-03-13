@@ -23,25 +23,24 @@ class ExpenseRowsProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  void uploadData() async {
-    try {
-      for (var e in expenseRows) {
-        // log(e.selectedDate.toString());
-        // log(e.cashAmount.toString());
-        // log(e.expenseItem.toString());
-        // log(e.paymentMethod.toString());
+  Future<bool> uploadData() async {
+    for (var e in expenseRows) {
+      // log(e.selectedDate.toString());
+      // log(e.cashAmount.toString());
+      // log(e.expenseItem.toString());
+      // log(e.paymentMethod.toString());
 
-        await FirebaseFirestore.instance.collection('expenses').add({
-          'cashAmount': e.cashAmount,
-          'date': e.selectedDate,
-          'expenseItem': e.expenseItem,
-          'paymentMethod': e.paymentMethod,
-        }).then((value) => _expenseRows.remove(e));
-      }
-      notifyListeners();
-    } catch (e) {
-      log(e.toString());
-      return;
+      await FirebaseFirestore.instance
+          .collection('expenses')
+          .add({
+            'cashAmount': e.cashAmount,
+            'date': e.selectedDate,
+            'expenseItem': e.expenseItem,
+            'paymentMethod': e.paymentMethod,
+          });
     }
+    _expenseRows.clear();
+    notifyListeners();
+    return true;
   }
 }

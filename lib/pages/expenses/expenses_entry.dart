@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:upturn_dashboard/functions/responsiveness.dart';
 import 'package:upturn_dashboard/provider/data_provider.dart';
 import 'package:upturn_dashboard/widgets/expense_row.dart';
 
@@ -15,6 +14,7 @@ class ExpenseEntryPage extends StatefulWidget {
 
 class _ExpenseEntryPageState extends State<ExpenseEntryPage> {
   final _formKey = GlobalKey<FormState>();
+  bool uploading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -24,8 +24,9 @@ class _ExpenseEntryPageState extends State<ExpenseEntryPage> {
           ChangeNotifierProvider(create: (context) => DataProvider()),
         ],
         builder: (context, child) {
+          final parentContext = context;
           int rowCount = 0;
-          return Column(
+          return ListView(
             children: [
               Padding(
                 padding: const EdgeInsets.all(8.0),
@@ -52,47 +53,57 @@ class _ExpenseEntryPageState extends State<ExpenseEntryPage> {
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: ElevatedButton(
-                  onPressed: () {
-                    if (_formKey.currentState!.validate()) {
-                      context.read<ExpenseRowsProvider>().uploadData();
-                    }
-                  },
-                  child: const Text('Submit'),
+                  onPressed: uploading
+                      ? null
+                      : () async {
+                          setState(() {
+                            uploading = true;
+                          });
+                          await showDialog(
+                              context: context,
+                              builder: (context) {
+                                return AlertDialog(
+                                  title: const Text('Uploading Data'),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () {
+                                        setState(() {
+                                          uploading = false;
+                                        });
+                                        Navigator.pop(context);
+                                      },
+                                      child: const Text('Cancel'),
+                                    ),
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                        if (_formKey.currentState!.validate()) {
+                                          parentContext
+                                              .read<ExpenseRowsProvider>()
+                                              .uploadData()
+                                              .then((value) {
+                                            setState(() {
+                                              uploading = false;
+                                            });
+                                          });
+                                        }
+                                      },
+                                      child: const Text('Confirm'),
+                                    )
+                                  ],
+                                );
+                              });
+                        },
+                  child: uploading
+                      ? const Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: CircularProgressIndicator(),
+                        )
+                      : const Text('Submit'),
                 ),
               ),
             ],
           );
         });
-  }
-
-  Widget bodyContents(
-      AsyncSnapshot<List<Map<String, dynamic>>> snapshot, context) {
-    Widget list = Expanded(
-      child: ListView(
-        children: snapshot.data!
-            .map((e) => Card(
-                  child: ListTile(
-                    title: Text(e['name']),
-                    subtitle: Text(e['email']),
-                  ),
-                ))
-            .toList(),
-      ),
-    );
-
-    if (isWideScreen(context)) {
-      return Expanded(
-        child: Row(
-          children: [
-            list,
-            SizedBox(
-              width: getPercentageOfScreenWidth(context, 0.4),
-            )
-          ],
-        ),
-      );
-    } else {
-      return list;
-    }
   }
 }
