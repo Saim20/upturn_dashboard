@@ -9,8 +9,10 @@ class DataProvider with ChangeNotifier {
   get sett => s;
 
   List<String> _paymentMethods = [];
+  List<String> _expenseItems = [];
 
   List<String> get paymentMethods => _paymentMethods;
+  List<String> get expenseItems => _expenseItems;
 
   Stream<DocumentSnapshot<Map<String, dynamic>>>? dataStream;
   StreamSubscription<DocumentSnapshot<Map<String, dynamic>>>? dataSubscription;
@@ -25,13 +27,30 @@ class DataProvider with ChangeNotifier {
         .doc('options')
         .snapshots();
     dataSubscription ??= dataStream!.listen((event) {
-      _paymentMethods = event
-          .data()!['paymentMethods']
+      Map<String, dynamic> data = event.data()!;
+
+      _paymentMethods = data['paymentMethods']
           .toString()
-          .substring(1, event.data()!['paymentMethods'].toString().length - 1)
+          .substring(1, data['paymentMethods'].toString().length - 1)
           .split(',')
           .map((e) => e)
           .toList();
+      notifyListeners();
+
+      _expenseItems = data['expenseItems']
+          .toString()
+          .substring(1, data['expenseItems'].toString().length - 1)
+          .split(',')
+          .map((e) {
+        // if (e.contains('#')) {
+        //   String ret = '';
+        //   e.split('#').forEach((element) {
+        //     ret += element;
+        //   });
+        //   return ret;
+        // }
+        return e;
+      }).toList();
       notifyListeners();
     });
   }

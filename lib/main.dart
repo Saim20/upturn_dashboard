@@ -1,11 +1,10 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:provider/provider.dart';
 import 'package:upturn_dashboard/firebase_options.dart';
 import 'package:upturn_dashboard/themes/theme.dart';
+import 'package:url_strategy/url_strategy.dart';
 
-import 'provider/data.dart';
 import 'router/go_router.dart';
 
 SystemUiOverlayStyle systemUiOverlayStyle = const SystemUiOverlayStyle(
@@ -18,15 +17,10 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
+  setPathUrlStrategy();
+
   runApp(
-    MultiProvider(
-      providers: [
-        ChangeNotifierProvider(
-          create: (_) => DataProvider(),
-        ),
-      ],
-      builder: (context, child) => const MainApp(),
-    ),
+    const MainApp(),
   );
 }
 
@@ -45,6 +39,7 @@ class MainApp extends StatelessWidget {
     SystemChrome.setSystemUIOverlayStyle(systemUiOverlayStyle);
 
     return MaterialApp.router(
+      debugShowCheckedModeBanner: false,
       title: "Upturn Dashboard",
       theme: lightTheme,
       darkTheme: darkTheme,
