@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:upturn_dashboard/functions/responsiveness.dart';
 
 // Shell widget for containing the destinations
 class Shell extends StatefulWidget {
@@ -13,11 +14,15 @@ class Shell extends StatefulWidget {
 
 class _ShellState extends State<Shell> {
   String selected = '/expenses';
-  bool isWide = false;
 
   Map<String, Icon> mainDestinations = {
     '/expenses': const Icon(Icons.money_off_csred_outlined),
     '/revenue': const Icon(Icons.attach_money_outlined),
+  };
+
+  Map<String, Icon> constantDestinations = {
+    '/settings': const Icon(Icons.settings),
+    '/login': const Icon(Icons.login_outlined),
   };
 
   List<Widget> actionElements = [];
@@ -49,16 +54,64 @@ class _ShellState extends State<Shell> {
       );
     });
     return Scaffold(
-      // * Use the child provided by go_router
       appBar: AppBar(
         toolbarHeight: 60,
         title: const Text('Upturn Dashboard'),
         leading: const Icon(Icons.monitor),
-        actions: actionElements,
+        actions: [
+          if (isWideScreen(context)) ...actionElements,
+          PopupMenuButton<String>(onSelected: (value) {
+            selected = value;
+            context.go(value);
+          }, itemBuilder: (BuildContext context) {
+            List<PopupMenuEntry<String>> items = [];
+
+            if (!isWideScreen(context)) {
+              items.addAll(mainDestinations.keys.map((String key) {
+                return PopupMenuItem<String>(
+                  value: key,
+                  onTap: () => context.go(key),
+                  child: Row(
+                    children: [
+                      mainDestinations[key]!,
+                      Text(
+                          key.substring(1)[0].toUpperCase() + key.substring(2)),
+                    ],
+                  ),
+                );
+              }).toList());
+
+              items.add(const PopupMenuDivider());
+            }
+
+            items.addAll(constantDestinations.keys.map((String key) {
+              return PopupMenuItem<String>(
+                value: key,
+                onTap: () => context.go(key),
+                child: Row(
+                  children: [
+                    constantDestinations[key]!,
+                    Text(key.substring(1)[0].toUpperCase() + key.substring(2)),
+                  ],
+                ),
+              );
+            }).toList());
+
+            return items;
+          }),
+        ],
+        // ...
       ),
-      body: Row(
+      body: Column(
         children: [
           Expanded(child: widget.child),
+          if(isWideScreen(context))
+          Container(
+            height: 70, 
+            color: Theme.of(context).colorScheme.onSecondary,
+            child: const Center(
+                child: Text('Footer')),
+          ),
         ],
       ),
     );

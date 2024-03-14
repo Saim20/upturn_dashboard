@@ -41,67 +41,87 @@ class _ExpenseEntryPageState extends State<ExpenseEntryPage> {
                   ),
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: ElevatedButton(
-                  onPressed: () {
-                    context.read<ExpenseRowsProvider>().addExpenseRow();
-                  },
-                  child: const Text('Add Row'),
-                ),
+              Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: ElevatedButton(
+                      onPressed: () {
+                        context.read<ExpenseRowsProvider>().addExpenseRow();
+                      },
+                      child: const Text('Add Row'),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: ElevatedButton(
+                      style: ButtonStyle(
+                        backgroundColor: MaterialStatePropertyAll(
+                            Theme.of(context).colorScheme.onSecondary),
+                      ),
+                      onPressed: uploading
+                          ? null
+                          : () async {
+                              if (_formKey.currentState!.validate()) {
+                                setState(() {
+                                  uploading = true;
+                                });
+                                await showDialog(
+                                    context: context,
+                                    builder: (context) {
+                                      return AlertDialog(
+                                        title: const Text('Enter Data?'),
+                                        content: const Text('Is the data correct?'),
+                                        actions: [
+                                          TextButton(
+                                            onPressed: () {
+                                              setState(() {
+                                                uploading = false;
+                                              });
+                                              Navigator.pop(context);
+                                            },
+                                            style: TextButton.styleFrom(
+                                                backgroundColor: Colors.red),
+                                            child: const Text(
+                                              'No',
+                                              style: TextStyle(
+                                                color: Colors.white,
+                                              ),
+                                            ),
+                                          ),
+                                          TextButton(
+                                            onPressed: () {
+                                              Navigator.pop(context);
+                                              if (_formKey.currentState!
+                                                  .validate()) {
+                                                parentContext
+                                                    .read<ExpenseRowsProvider>()
+                                                    .uploadData()
+                                                    .then((value) {
+                                                  setState(() {
+                                                    uploading = false;
+                                                  });
+                                                });
+                                              }
+                                            },
+                                            child: const Text(
+                                              'Yes, confirm',
+                                              style: TextStyle(color: Colors.green),
+                                            ),
+                                          )
+                                        ],
+                                      );
+                                    });
+                              }
+                            },
+                      child: uploading
+                          ? const CircularProgressIndicator()
+                          : const Text('Submit'),
+                    ),
+                  ),
+                ],
               ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: ElevatedButton(
-                  onPressed: uploading
-                      ? null
-                      : () async {
-                          setState(() {
-                            uploading = true;
-                          });
-                          await showDialog(
-                              context: context,
-                              builder: (context) {
-                                return AlertDialog(
-                                  title: const Text('Uploading Data'),
-                                  actions: [
-                                    TextButton(
-                                      onPressed: () {
-                                        setState(() {
-                                          uploading = false;
-                                        });
-                                        Navigator.pop(context);
-                                      },
-                                      child: const Text('Cancel'),
-                                    ),
-                                    TextButton(
-                                      onPressed: () {
-                                        Navigator.pop(context);
-                                        if (_formKey.currentState!.validate()) {
-                                          parentContext
-                                              .read<ExpenseRowsProvider>()
-                                              .uploadData()
-                                              .then((value) {
-                                            setState(() {
-                                              uploading = false;
-                                            });
-                                          });
-                                        }
-                                      },
-                                      child: const Text('Confirm'),
-                                    )
-                                  ],
-                                );
-                              });
-                        },
-                  child: uploading
-                      ? const Padding(
-                          padding: EdgeInsets.all(8.0),
-                          child: CircularProgressIndicator(),
-                        )
-                      : const Text('Submit'),
-                ),
-              ),
+            
             ],
           );
         });
