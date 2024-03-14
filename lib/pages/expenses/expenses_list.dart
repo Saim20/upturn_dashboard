@@ -71,90 +71,94 @@ class _ExpenseListPageState extends State<ExpenseListPage> {
 
                 return Expanded(
                   child: SingleChildScrollView(
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: DataTable(
-                        border: TableBorder.all(
-                          color: Colors.blueGrey,
-                          width: 2,
-                          borderRadius: BorderRadius.circular(6),
+                    scrollDirection: Axis.vertical,
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: DataTable(
+                          border: TableBorder.all(
+                            color: Colors.blueGrey,
+                            width: 2,
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                          headingTextStyle: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 17,
+                          ),
+                          // headingRowColor:
+                          //     MaterialStateProperty.all(Colors.blueGrey),
+                          columns: const <DataColumn>[
+                            DataColumn(
+                              label: Text('Date'),
+                            ),
+                            DataColumn(
+                              label: Text('Expense Item'),
+                            ),
+                            DataColumn(
+                              label: Text('Payment Method'),
+                            ),
+                            DataColumn(
+                              label: Text('Amount'),
+                            ),
+                          ],
+                          rows: [
+                            ...snapshot.data!.docs.map<DataRow>(
+                              (DocumentSnapshot document) {
+                                return DataRow(
+                                  cells: <DataCell>[
+                                    DataCell(
+                                      Text(
+                                        formattedDate(
+                                            (document['date'] as Timestamp)
+                                                .toDate()),
+                                      ),
+                                    ),
+                                    DataCell(
+                                      Text(
+                                        document['expenseItem'],
+                                      ),
+                                    ),
+                                    DataCell(
+                                      Text(
+                                        document['paymentMethod'],
+                                      ),
+                                    ),
+                                    DataCell(
+                                      Text(
+                                        document['cashAmount'].toString(),
+                                      ),
+                                    ),
+                                  ],
+                                );
+                              },
+                            ),
+                            DataRow(
+                              cells: [
+                                const DataCell(
+                                  Text(
+                                    '',
+                                  ),
+                                ),
+                                const DataCell(
+                                  Text(
+                                    '',
+                                  ),
+                                ),
+                                const DataCell(
+                                  Text(
+                                    'Total:',
+                                  ),
+                                ),
+                                DataCell(
+                                  Text(
+                                    totalAmount.toString(),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
                         ),
-                        headingTextStyle: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 17,
-                        ),
-                        // headingRowColor:
-                        //     MaterialStateProperty.all(Colors.blueGrey),
-                        columns: const <DataColumn>[
-                          DataColumn(
-                            label: Text('Date'),
-                          ),
-                          DataColumn(
-                            label: Text('Expense Item'),
-                          ),
-                          DataColumn(
-                            label: Text('Payment Method'),
-                          ),
-                          DataColumn(
-                            label: Text('Amount'),
-                          ),
-                        ],
-                        rows: [
-                          ...snapshot.data!.docs.map<DataRow>(
-                            (DocumentSnapshot document) {
-                              return DataRow(
-                                cells: <DataCell>[
-                                  DataCell(
-                                    Text(
-                                      formattedDate(
-                                          (document['date'] as Timestamp)
-                                              .toDate()),
-                                    ),
-                                  ),
-                                  DataCell(
-                                    Text(
-                                      document['expenseItem'],
-                                    ),
-                                  ),
-                                  DataCell(
-                                    Text(
-                                      document['paymentMethod'],
-                                    ),
-                                  ),
-                                  DataCell(
-                                    Text(
-                                      document['cashAmount'].toString(),
-                                    ),
-                                  ),
-                                ],
-                              );
-                            },
-                          ),
-                          DataRow(
-                            cells: [
-                              const DataCell(
-                                Text(
-                                  '',
-                                ),
-                              ),
-                              const DataCell(
-                                Text(
-                                  '',
-                                ),
-                              ),
-                              const DataCell(
-                                Text(
-                                  'Total:',
-                                ),
-                              ),
-                              DataCell(
-                                Text(
-                                  totalAmount.toString(),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
                       ),
                     ),
                   ),
