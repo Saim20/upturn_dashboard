@@ -1,6 +1,6 @@
 // GoRouter configuration
 import 'package:go_router/go_router.dart';
-import 'package:upturn_dashboard/pages/404.dart';
+import 'package:upturn_dashboard/pages/not_found.dart';
 import 'package:upturn_dashboard/pages/expenses/expenses_entry.dart';
 import 'package:upturn_dashboard/pages/expenses/expenses_list.dart';
 import 'package:upturn_dashboard/pages/expenses/main_expenses.dart';

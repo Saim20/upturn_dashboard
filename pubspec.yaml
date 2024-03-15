@@ -40,6 +40,7 @@ dependencies:
   go_router: ^13.2.0
   cloud_firestore: ^4.15.8
   url_strategy: ^0.2.0
+  month_picker_dialog: ^2.11.1
 
 dev_dependencies:
   flutter_test:

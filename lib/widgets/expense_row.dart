@@ -1,6 +1,6 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:month_picker_dialog/month_picker_dialog.dart';
 import 'package:provider/provider.dart';
 import 'package:upturn_dashboard/functions/responsiveness.dart';
 import 'package:upturn_dashboard/provider/data_provider.dart';
@@ -21,7 +21,8 @@ class ExpenseRow extends StatefulWidget {
 }
 
 class _ExpenseRowState extends State<ExpenseRow> {
-  DateTime? _selectedDate;
+  DateTime? _transactionDate;
+  DateTime? _incurredDate;
   String? _expenseItem;
   String? _paymentMethod;
 
@@ -29,10 +30,14 @@ class _ExpenseRowState extends State<ExpenseRow> {
 
   @override
   Widget build(BuildContext context) {
-    _selectedDate = context
+    _transactionDate = context
         .watch<ExpenseRowsProvider>()
         .expenseRows[widget.id]
-        .selectedDate;
+        .transactionDate;
+    _incurredDate = context
+        .watch<ExpenseRowsProvider>()
+        .expenseRows[widget.id]
+        .incurredDate;
     _expenseItem =
         context.watch<ExpenseRowsProvider>().expenseRows[widget.id].expenseItem;
     _paymentMethod = context
@@ -43,7 +48,7 @@ class _ExpenseRowState extends State<ExpenseRow> {
     cashController.text = context
         .watch<ExpenseRowsProvider>()
         .expenseRows[widget.id]
-        .cashAmount
+        .amount
         .toString();
 
     List<Widget> contents = [
@@ -53,27 +58,76 @@ class _ExpenseRowState extends State<ExpenseRow> {
           padding: const EdgeInsets.all(8.0),
           child: TextFormField(
             decoration: const InputDecoration(
-              labelText: 'Date',
+              labelText: 'Transaction Date',
             ),
             onTap: () async {
               FocusScope.of(context).requestFocus(FocusNode());
               final DateTime? picked = await showDatePicker(
                 context: context,
-                initialDate: _selectedDate ?? DateTime.now(),
-                firstDate: DateTime(2023),
+                initialDate: _transactionDate ?? DateTime.now(),
+                firstDate: DateTime(2022),
                 lastDate: DateTime.now(),
               );
-              if (picked != null && picked != _selectedDate) {
+              if (picked != null && picked != _transactionDate) {
                 setState(() {
+                  if (_incurredDate!.isAfter(picked)) {
+                    _incurredDate = DateTime(
+                        picked.year, picked.month);
+                    context
+                        .read<ExpenseRowsProvider>()
+                        .expenseRows[widget.id]
+                        .incurredDate = _incurredDate!;
+                  }
                   context
                       .read<ExpenseRowsProvider>()
                       .expenseRows[widget.id]
-                      .selectedDate = picked;
+                      .transactionDate = picked;
                 });
               }
             },
             controller: TextEditingController(
-              text: _selectedDate == null ? '' : formattedDate(_selectedDate!),
+              text: _transactionDate == null
+                  ? ''
+                  : formattedDate(_transactionDate!),
+            ),
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Please select a date';
+              }
+              return null;
+            },
+          ),
+        ),
+      ),
+      SizedBox(
+        width: isWideScreen(context) ? 200 : null,
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: TextFormField(
+            decoration: const InputDecoration(
+              labelText: 'Incurred Date',
+            ),
+            onTap: () async {
+              FocusScope.of(context).requestFocus(FocusNode());
+              final DateTime? picked = await showMonthPicker(
+                context: context,
+                initialDate: _incurredDate ?? DateTime.now(),
+                firstDate: DateTime(2022),
+                lastDate: _transactionDate,
+              );
+              if (picked != null && picked != _incurredDate) {
+                setState(() {
+                  context
+                      .read<ExpenseRowsProvider>()
+                      .expenseRows[widget.id]
+                      .incurredDate = picked;
+                });
+              }
+            },
+            controller: TextEditingController(
+              text: _incurredDate == null
+                  ? ''
+                  : formattedDate(_incurredDate!).substring(3),
             ),
             validator: (value) {
               if (value == null || value.isEmpty) {
@@ -173,7 +227,7 @@ class _ExpenseRowState extends State<ExpenseRow> {
               context
                   .read<ExpenseRowsProvider>()
                   .expenseRows[widget.id]
-                  .cashAmount = int.parse(newValue!);
+                  .amount = int.parse(newValue!);
             },
           ),
         ),

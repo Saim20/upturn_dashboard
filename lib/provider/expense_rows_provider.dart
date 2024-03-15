@@ -1,19 +1,19 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:upturn_dashboard/data/expense_row_data.dart';
+import 'package:upturn_dashboard/data/expense_data.dart';
 
 class ExpenseRowsProvider with ChangeNotifier {
-  final List<ExpenseRowData> _expenseRows = [
-    ExpenseRowData(),
+  final List<ExpenseData> _expenseRows = [
+    ExpenseData(),
   ];
 
-  List<ExpenseRowData> get expenseRows => _expenseRows;
+  List<ExpenseData> get expenseRows => _expenseRows;
 
-  ExpenseRowData expenseRow(int n) => _expenseRows[n];
+  ExpenseData expenseRow(int n) => _expenseRows[n];
 
   void addExpenseRow() {
-    _expenseRows.add(ExpenseRowData());
+    _expenseRows.add(ExpenseData());
     notifyListeners();
   }
 
@@ -32,10 +32,11 @@ class ExpenseRowsProvider with ChangeNotifier {
       await FirebaseFirestore.instance
           .collection('expenses')
           .add({
-            'cashAmount': e.cashAmount,
-            'date': e.selectedDate,
+            'amount': e.amount,
             'expenseItem': e.expenseItem,
             'paymentMethod': e.paymentMethod,
+            'incurredDate': e.incurredDate,
+            'transactionDate': e.transactionDate,
           });
     }
     _expenseRows.clear();

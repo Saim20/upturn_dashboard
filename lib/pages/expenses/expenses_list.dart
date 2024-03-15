@@ -19,6 +19,9 @@ class _ExpenseListPageState extends State<ExpenseListPage> {
 
   @override
   Widget build(BuildContext context) {
+
+    //TODO Fix list
+
     return Column(
       children: [
         Row(
@@ -188,12 +191,12 @@ class Filter extends StatefulWidget {
 }
 
 class _FilterState extends State<Filter> {
-  var _selectedDate;
+  late DateTime _transactionDate;
 
   @override
   void initState() {
     super.initState();
-    _selectedDate = widget.initialDate;
+    _transactionDate = widget.initialDate;
   }
 
   @override
@@ -210,19 +213,19 @@ class _FilterState extends State<Filter> {
             FocusScope.of(context).requestFocus(FocusNode());
             final DateTime? picked = await showDatePicker(
               context: context,
-              initialDate: _selectedDate ?? DateTime.now(),
+              initialDate: _transactionDate,
               firstDate: DateTime(2023),
               lastDate: DateTime.now(),
             );
-            if (picked != null && picked != _selectedDate) {
+            if (picked != null && picked != _transactionDate) {
               setState(() {
-                _selectedDate = picked;
-                widget.onChanged(_selectedDate);
+                _transactionDate = picked;
+                widget.onChanged(_transactionDate);
               });
             }
           },
           controller: TextEditingController(
-            text: _selectedDate == null ? '' : formattedDate(_selectedDate),
+            text: formattedDate(_transactionDate),
           ),
           validator: (value) {
             if (value == null || value.isEmpty) {
