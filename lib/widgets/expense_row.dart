@@ -4,7 +4,7 @@ import 'package:month_picker_dialog/month_picker_dialog.dart';
 import 'package:provider/provider.dart';
 import 'package:upturn_dashboard/functions/responsiveness.dart';
 import 'package:upturn_dashboard/provider/data_provider.dart';
-import 'package:upturn_dashboard/provider/expense_rows_provider.dart';
+import 'package:upturn_dashboard/provider/expense_provider.dart';
 
 import '../functions/date_time_converters.dart';
 
@@ -31,25 +31,27 @@ class _ExpenseRowState extends State<ExpenseRow> {
   @override
   Widget build(BuildContext context) {
     _transactionDate = context
-        .watch<ExpenseRowsProvider>()
+        .watch<ExpensesProvider>()
         .expenseRows[widget.id]
         .transactionDate;
     _incurredDate = context
-        .watch<ExpenseRowsProvider>()
+        .watch<ExpensesProvider>()
         .expenseRows[widget.id]
         .incurredDate;
     _expenseItem =
-        context.watch<ExpenseRowsProvider>().expenseRows[widget.id].expenseItem;
+        context.watch<ExpensesProvider>().expenseRows[widget.id].expenseItem;
     _paymentMethod = context
-        .watch<ExpenseRowsProvider>()
+        .watch<ExpensesProvider>()
         .expenseRows[widget.id]
         .paymentMethod;
 
     cashController.text = context
-        .watch<ExpenseRowsProvider>()
+        .watch<ExpensesProvider>()
         .expenseRows[widget.id]
         .amount
         .toString();
+
+    double textFieldWidth = (MediaQuery.of(context).size.width - 815) / 2;
 
     List<Widget> contents = [
       SizedBox(
@@ -74,12 +76,12 @@ class _ExpenseRowState extends State<ExpenseRow> {
                     _incurredDate = DateTime(
                         picked.year, picked.month);
                     context
-                        .read<ExpenseRowsProvider>()
+                        .read<ExpensesProvider>()
                         .expenseRows[widget.id]
                         .incurredDate = _incurredDate!;
                   }
                   context
-                      .read<ExpenseRowsProvider>()
+                      .read<ExpensesProvider>()
                       .expenseRows[widget.id]
                       .transactionDate = picked;
                 });
@@ -118,7 +120,7 @@ class _ExpenseRowState extends State<ExpenseRow> {
               if (picked != null && picked != _incurredDate) {
                 setState(() {
                   context
-                      .read<ExpenseRowsProvider>()
+                      .read<ExpensesProvider>()
                       .expenseRows[widget.id]
                       .incurredDate = picked;
                 });
@@ -139,7 +141,7 @@ class _ExpenseRowState extends State<ExpenseRow> {
         ),
       ),
       SizedBox(
-        width: isWideScreen(context) ? 320 : null,
+        width: isWideScreen(context) ? 295 : null,
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: DropdownButtonFormField<String>(
@@ -156,7 +158,7 @@ class _ExpenseRowState extends State<ExpenseRow> {
             onChanged: (String? newValue) {
               setState(() {
                 context
-                    .read<ExpenseRowsProvider>()
+                    .read<ExpensesProvider>()
                     .expenseRows[widget.id]
                     .expenseItem = newValue;
               });
@@ -172,7 +174,7 @@ class _ExpenseRowState extends State<ExpenseRow> {
         ),
       ),
       SizedBox(
-        width: isWideScreen(context) ? 240 : null,
+        width: isWideScreen(context) ? textFieldWidth : null,
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: DropdownButtonFormField<String>(
@@ -189,7 +191,7 @@ class _ExpenseRowState extends State<ExpenseRow> {
             onChanged: (String? newValue) {
               setState(() {
                 context
-                    .read<ExpenseRowsProvider>()
+                    .read<ExpensesProvider>()
                     .expenseRows[widget.id]
                     .paymentMethod = newValue;
               });
@@ -205,7 +207,7 @@ class _ExpenseRowState extends State<ExpenseRow> {
         ),
       ),
       SizedBox(
-        width: isWideScreen(context) ? 240 : null,
+        width: isWideScreen(context) ? textFieldWidth : null,
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: TextFormField(
@@ -225,7 +227,7 @@ class _ExpenseRowState extends State<ExpenseRow> {
             },
             onChanged: (String? newValue) {
               context
-                  .read<ExpenseRowsProvider>()
+                  .read<ExpensesProvider>()
                   .expenseRows[widget.id]
                   .amount = int.parse(newValue!);
             },
@@ -236,7 +238,7 @@ class _ExpenseRowState extends State<ExpenseRow> {
         padding: const EdgeInsets.all(8.0),
         child: ElevatedButton(
           onPressed: () {
-            context.read<ExpenseRowsProvider>().removeExpenseRow(widget.id);
+            context.read<ExpensesProvider>().removeExpenseRow(widget.id);
           },
           child: const Icon(Icons.remove_circle_outline),
         ),

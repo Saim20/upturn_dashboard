@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class RevenueMainPage extends StatelessWidget {
   const RevenueMainPage({super.key});
@@ -25,7 +26,7 @@ class RevenueMainPage extends StatelessWidget {
               child: Text('Entry'),
             ),
             onPressed: () {
-              // context.go('/revenue/entry');
+              context.go('/revenue/entry');
             },
           ),
         ),
@@ -38,7 +39,7 @@ class RevenueMainPage extends StatelessWidget {
               child: Text('List'),
             ),
             onPressed: () {
-              // context.go('/revenue/list');
+              context.go('/revenue/list');
             },
           ),
         ),

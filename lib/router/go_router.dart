@@ -6,6 +6,8 @@ import 'package:upturn_dashboard/pages/expenses/expenses_list.dart';
 import 'package:upturn_dashboard/pages/expenses/main_expenses.dart';
 import 'package:upturn_dashboard/pages/login.dart';
 import 'package:upturn_dashboard/pages/revenue/main_revenue.dart';
+import 'package:upturn_dashboard/pages/revenue/revenue_entry.dart';
+import 'package:upturn_dashboard/pages/revenue/revenue_list.dart';
 import 'package:upturn_dashboard/pages/settings.dart';
 
 import '../widgets/shell.dart';
@@ -32,6 +34,14 @@ final router = GoRouter(
         GoRoute(
           path: '/revenue',
           builder: (context, state) => const RevenueMainPage(),
+        ),
+        GoRoute(
+          path: '/revenue/entry',
+          builder: (context, state) => const RevenueEntryPage(),
+        ),
+        GoRoute(
+          path: '/revenue/list',
+          builder: (context, state) => const RevenueListPage(),
         ),
         GoRoute(
           path: '/settings',

@@ -3,7 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:upturn_dashboard/data/expense_data.dart';
 
-class ExpenseRowsProvider with ChangeNotifier {
+class ExpensesProvider with ChangeNotifier {
   final List<ExpenseData> _expenseRows = [
     ExpenseData(),
   ];
@@ -24,11 +24,6 @@ class ExpenseRowsProvider with ChangeNotifier {
 
   Future<bool> uploadData() async {
     for (var e in expenseRows) {
-      // log(e.selectedDate.toString());
-      // log(e.cashAmount.toString());
-      // log(e.expenseItem.toString());
-      // log(e.paymentMethod.toString());
-
       await FirebaseFirestore.instance
           .collection('expenses')
           .add({
