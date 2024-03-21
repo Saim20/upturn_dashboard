@@ -21,63 +21,169 @@ class RevenueRow extends StatefulWidget {
 class _RevenueRowState extends State<RevenueRow> {
   DateTime? _transactionDate;
 
-  final collectiblePathaoController = TextEditingController();
-  final collectibleSteadfastController = TextEditingController();
-  final collectibleSslcommerzController = TextEditingController();
-  final feesPathaoController = TextEditingController();
-  final feesSteadfastController = TextEditingController();
-  final feesSslcommerzController = TextEditingController();
-  final warehouseSalesController = TextEditingController();
-  final otherIncomeController = TextEditingController();
+  final Map<String, TextEditingController> collectibleControllers = {};
+  final Map<String, TextEditingController> feesControllers = {};
+  // final collectiblePathaoController = TextEditingController();
+  // final collectibleSteadfastController = TextEditingController();
+  // final collectibleSslcommerzController = TextEditingController();
+  // final feesPathaoController = TextEditingController();
+  // final feesSteadfastController = TextEditingController();
+  // final feesSslcommerzController = TextEditingController();
+  // final warehouseSalesController = TextEditingController();
+  // final otherIncomeController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    context
+        .read<RevenueProvider>()
+        .revenueDatas[widget.id]
+        .collectibles
+        .forEach((key, value) {
+      collectibleControllers[key] =
+          TextEditingController(text: value.toString());
+    });
+    context
+        .read<RevenueProvider>()
+        .revenueDatas[widget.id]
+        .fees
+        .forEach((key, value) {
+      feesControllers[key] = TextEditingController(text: value.toString());
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    _transactionDate =
-        context.watch<RevenueProvider>().revenueRows[widget.id].transactionDate;
+    _transactionDate = context
+        .watch<RevenueProvider>()
+        .revenueDatas[widget.id]
+        .transactionDate;
 
-    collectiblePathaoController.text = context
+    context
         .watch<RevenueProvider>()
-        .revenueRows[widget.id]
-        .collectiblePathao
-        .toString();
-    collectibleSteadfastController.text = context
+        .revenueDatas[widget.id]
+        .collectibles
+        .forEach((key, value) {
+      collectibleControllers[key] =
+          TextEditingController(text: value.toString());
+    });
+    context
         .watch<RevenueProvider>()
-        .revenueRows[widget.id]
-        .collectibleSteadfast
-        .toString();
-    collectibleSslcommerzController.text = context
-        .watch<RevenueProvider>()
-        .revenueRows[widget.id]
-        .collectibleSslcommerz
-        .toString();
-    feesPathaoController.text = context
-        .watch<RevenueProvider>()
-        .revenueRows[widget.id]
-        .feesPathao
-        .toString();
-    feesSteadfastController.text = context
-        .watch<RevenueProvider>()
-        .revenueRows[widget.id]
-        .feesSteadfast
-        .toString();
-    feesSslcommerzController.text = context
-        .watch<RevenueProvider>()
-        .revenueRows[widget.id]
-        .feesSslcommerz
-        .toString();
-    warehouseSalesController.text = context
-        .watch<RevenueProvider>()
-        .revenueRows[widget.id]
-        .warehouseSales
-        .toString();
-    otherIncomeController.text = context
-        .watch<RevenueProvider>()
-        .revenueRows[widget.id]
-        .otherIncome
-        .toString();
+        .revenueDatas[widget.id]
+        .fees
+        .forEach((key, value) {
+      feesControllers[key] = TextEditingController(text: value.toString());
+    });
 
     double textFieldWidth = (MediaQuery.of(context).size.width - 350) / 8;
+    List<Widget> inputFields = [];
 
+    collectibleControllers.forEach(
+      (key, value) {
+        inputFields.add(
+          SizedBox(
+            width: isWideScreen(context) ? textFieldWidth : null,
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: TextFormField(
+                decoration: InputDecoration(
+                  labelText: key,
+                ),
+                controller: value,
+                keyboardType: TextInputType.number,
+                inputFormatters: <TextInputFormatter>[
+                  FilteringTextInputFormatter.digitsOnly
+                ],
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter a cash amount';
+                  }
+                  return null;
+                },
+                onChanged: (String? newValue) {
+                  context
+                      .read<RevenueProvider>()
+                      .revenueDatas[widget.id]
+                      .collectibles[key] = int.parse(newValue!);
+                },
+              ),
+            ),
+          ),
+        );
+      },
+    );
+    feesControllers.forEach((key, value) {
+      inputFields.add(
+        SizedBox(
+          width: isWideScreen(context) ? textFieldWidth : null,
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: TextFormField(
+              decoration: InputDecoration(
+                labelText: key,
+              ),
+              controller: value,
+              keyboardType: TextInputType.number,
+              inputFormatters: <TextInputFormatter>[
+                FilteringTextInputFormatter.digitsOnly
+              ],
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter a cash amount';
+                }
+                return null;
+              },
+              onChanged: (String? newValue) {
+                context
+                    .read<RevenueProvider>()
+                    .revenueDatas[widget.id]
+                    .fees[key] = int.parse(newValue!);
+              },
+            ),
+          ),
+        ),
+      );
+    });
+    // collectiblePathaoController.text = context
+    //     .watch<RevenueProvider>()
+    //     .revenueDatas[widget.id]
+    //     .collectiblePathao
+    //     .toString();
+    // collectibleSteadfastController.text = context
+    //     .watch<RevenueProvider>()
+    //     .revenueDatas[widget.id]
+    //     .collectibleSteadfast
+    //     .toString();
+    // collectibleSslcommerzController.text = context
+    //     .watch<RevenueProvider>()
+    //     .revenueDatas[widget.id]
+    //     .collectibleSslcommerz
+    //     .toString();
+    // feesPathaoController.text = context
+    //     .watch<RevenueProvider>()
+    //     .revenueDatas[widget.id]
+    //     .feesPathao
+    //     .toString();
+    // feesSteadfastController.text = context
+    //     .watch<RevenueProvider>()
+    //     .revenueDatas[widget.id]
+    //     .feesSteadfast
+    //     .toString();
+    // feesSslcommerzController.text = context
+    //     .watch<RevenueProvider>()
+    //     .revenueDatas[widget.id]
+    //     .feesSslcommerz
+    //     .toString();
+    // warehouseSalesController.text = context
+    //     .watch<RevenueProvider>()
+    //     .revenueDatas[widget.id]
+    //     .warehouseSales
+    //     .toString();
+    // otherIncomeController.text = context
+    //     .watch<RevenueProvider>()
+    //     .revenueDatas[widget.id]
+    //     .otherIncome
+    //     .toString();
 
     List<Widget> contents = [
       SizedBox(
@@ -100,7 +206,7 @@ class _RevenueRowState extends State<RevenueRow> {
                 setState(() {
                   context
                       .read<RevenueProvider>()
-                      .revenueRows[widget.id]
+                      .revenueDatas[widget.id]
                       .transactionDate = picked;
                 });
               }
@@ -119,214 +225,231 @@ class _RevenueRowState extends State<RevenueRow> {
           ),
         ),
       ),
-      SizedBox(
-        width: isWideScreen(context) ? textFieldWidth : null,
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: TextFormField(
-            decoration: const InputDecoration(
-              labelText: 'Collectible Steadfast',
-            ),
-            controller: collectibleSteadfastController,
-            keyboardType: TextInputType.number,
-            inputFormatters: <TextInputFormatter>[
-              FilteringTextInputFormatter.digitsOnly
-            ],
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Please enter a cash amount';
-              }
-              return null;
-            },
-            onChanged: (String? newValue) {
-              context.read<RevenueProvider>().revenueRows[widget.id].collectibleSteadfast =
-                  int.parse(newValue!);
-            },
-          ),
-        ),
-      ),
-      SizedBox(
-        width: isWideScreen(context) ? textFieldWidth : null,
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: TextFormField(
-            decoration: const InputDecoration(
-              labelText: 'Fees Steadfast',
-            ),
-            controller: feesSteadfastController,
-            keyboardType: TextInputType.number,
-            inputFormatters: <TextInputFormatter>[
-              FilteringTextInputFormatter.digitsOnly
-            ],
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Please enter a cash amount';
-              }
-              return null;
-            },
-            onChanged: (String? newValue) {
-              context.read<RevenueProvider>().revenueRows[widget.id].feesSteadfast =
-                  int.parse(newValue!);
-            },
-          ),
-        ),
-      ),
-      SizedBox(
-        width: isWideScreen(context) ? textFieldWidth : null,
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: TextFormField(
-            decoration: const InputDecoration(
-              labelText: 'Collectible Pathao',
-            ),
-            controller: collectiblePathaoController,
-            keyboardType: TextInputType.number,
-            inputFormatters: <TextInputFormatter>[
-              FilteringTextInputFormatter.digitsOnly
-            ],
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Please enter a cash amount';
-              }
-              return null;
-            },
-            onChanged: (String? newValue) {
-              context.read<RevenueProvider>().revenueRows[widget.id].collectiblePathao =
-                  int.parse(newValue!);
-            },
-          ),
-        ),
-      ),
-      SizedBox(
-        width: isWideScreen(context) ? textFieldWidth : null,
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: TextFormField(
-            decoration: const InputDecoration(
-              labelText: 'Fees Pathao',
-            ),
-            controller: feesPathaoController,
-            keyboardType: TextInputType.number,
-            inputFormatters: <TextInputFormatter>[
-              FilteringTextInputFormatter.digitsOnly
-            ],
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Please enter a cash amount';
-              }
-              return null;
-            },
-            onChanged: (String? newValue) {
-              context.read<RevenueProvider>().revenueRows[widget.id].feesPathao =
-                  int.parse(newValue!);
-            },
-          ),
-        ),
-      ),
-      SizedBox(
-        width: isWideScreen(context) ? textFieldWidth : null,
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: TextFormField(
-            decoration: const InputDecoration(
-              labelText: 'Collectible SSLCommerz',
-            ),
-            controller: collectibleSslcommerzController,
-            keyboardType: TextInputType.number,
-            inputFormatters: <TextInputFormatter>[
-              FilteringTextInputFormatter.digitsOnly
-            ],
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Please enter a cash amount';
-              }
-              return null;
-            },
-            onChanged: (String? newValue) {
-              context.read<RevenueProvider>().revenueRows[widget.id].collectibleSslcommerz =
-                  int.parse(newValue!);
-            },
-          ),
-        ),
-      ),
-      SizedBox(
-        width: isWideScreen(context) ? textFieldWidth : null,
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: TextFormField(
-            decoration: const InputDecoration(
-              labelText: 'Fees SSLCommerz',
-            ),
-            controller: feesSslcommerzController,
-            keyboardType: TextInputType.number,
-            inputFormatters: <TextInputFormatter>[
-              FilteringTextInputFormatter.digitsOnly
-            ],
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Please enter a cash amount';
-              }
-              return null;
-            },
-            onChanged: (String? newValue) {
-              context.read<RevenueProvider>().revenueRows[widget.id].feesSslcommerz =
-                  int.parse(newValue!);
-            },
-          ),
-        ),
-      ),
-      SizedBox(
-        width: isWideScreen(context) ? textFieldWidth : null,
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: TextFormField(
-            decoration: const InputDecoration(
-              labelText: 'Warehouse Sales',
-            ),
-            controller: warehouseSalesController,
-            keyboardType: TextInputType.number,
-            inputFormatters: <TextInputFormatter>[
-              FilteringTextInputFormatter.digitsOnly
-            ],
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Please enter a cash amount';
-              }
-              return null;
-            },
-            onChanged: (String? newValue) {
-              context.read<RevenueProvider>().revenueRows[widget.id].warehouseSales =
-                  int.parse(newValue!);
-            },
-          ),
-        ),
-      ),
-      SizedBox(
-        width: isWideScreen(context) ? textFieldWidth : null,
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: TextFormField(
-            decoration: const InputDecoration(
-              labelText: 'Other Income',
-            ),
-            controller: otherIncomeController,
-            keyboardType: TextInputType.number,
-            inputFormatters: <TextInputFormatter>[
-              FilteringTextInputFormatter.digitsOnly
-            ],
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Please enter a cash amount';
-              }
-              return null;
-            },
-            onChanged: (String? newValue) {
-              context.read<RevenueProvider>().revenueRows[widget.id].otherIncome =
-                  int.parse(newValue!);
-            },
-          ),
-        ),
-      ),
+      // SizedBox(
+      //   width: isWideScreen(context) ? textFieldWidth : null,
+      //   child: Padding(
+      //     padding: const EdgeInsets.all(8.0),
+      //     child: TextFormField(
+      //       decoration: const InputDecoration(
+      //         labelText: 'Collectible Steadfast',
+      //       ),
+      //       controller: collectibleSteadfastController,
+      //       keyboardType: TextInputType.number,
+      //       inputFormatters: <TextInputFormatter>[
+      //         FilteringTextInputFormatter.digitsOnly
+      //       ],
+      //       validator: (value) {
+      //         if (value == null || value.isEmpty) {
+      //           return 'Please enter a cash amount';
+      //         }
+      //         return null;
+      //       },
+      //       onChanged: (String? newValue) {
+      //         context
+      //             .read<RevenueProvider>()
+      //             .revenueDatas[widget.id]
+      //             .collectibleSteadfast = int.parse(newValue!);
+      //       },
+      //     ),
+      //   ),
+      // ),
+      // SizedBox(
+      //   width: isWideScreen(context) ? textFieldWidth : null,
+      //   child: Padding(
+      //     padding: const EdgeInsets.all(8.0),
+      //     child: TextFormField(
+      //       decoration: const InputDecoration(
+      //         labelText: 'Fees Steadfast',
+      //       ),
+      //       controller: feesSteadfastController,
+      //       keyboardType: TextInputType.number,
+      //       inputFormatters: <TextInputFormatter>[
+      //         FilteringTextInputFormatter.digitsOnly
+      //       ],
+      //       validator: (value) {
+      //         if (value == null || value.isEmpty) {
+      //           return 'Please enter a cash amount';
+      //         }
+      //         return null;
+      //       },
+      //       onChanged: (String? newValue) {
+      //         context
+      //             .read<RevenueProvider>()
+      //             .revenueDatas[widget.id]
+      //             .feesSteadfast = int.parse(newValue!);
+      //       },
+      //     ),
+      //   ),
+      // ),
+      // SizedBox(
+      //   width: isWideScreen(context) ? textFieldWidth : null,
+      //   child: Padding(
+      //     padding: const EdgeInsets.all(8.0),
+      //     child: TextFormField(
+      //       decoration: const InputDecoration(
+      //         labelText: 'Collectible Pathao',
+      //       ),
+      //       controller: collectiblePathaoController,
+      //       keyboardType: TextInputType.number,
+      //       inputFormatters: <TextInputFormatter>[
+      //         FilteringTextInputFormatter.digitsOnly
+      //       ],
+      //       validator: (value) {
+      //         if (value == null || value.isEmpty) {
+      //           return 'Please enter a cash amount';
+      //         }
+      //         return null;
+      //       },
+      //       onChanged: (String? newValue) {
+      //         context
+      //             .read<RevenueProvider>()
+      //             .revenueDatas[widget.id]
+      //             .collectiblePathao = int.parse(newValue!);
+      //       },
+      //     ),
+      //   ),
+      // ),
+      // SizedBox(
+      //   width: isWideScreen(context) ? textFieldWidth : null,
+      //   child: Padding(
+      //     padding: const EdgeInsets.all(8.0),
+      //     child: TextFormField(
+      //       decoration: const InputDecoration(
+      //         labelText: 'Fees Pathao',
+      //       ),
+      //       controller: feesPathaoController,
+      //       keyboardType: TextInputType.number,
+      //       inputFormatters: <TextInputFormatter>[
+      //         FilteringTextInputFormatter.digitsOnly
+      //       ],
+      //       validator: (value) {
+      //         if (value == null || value.isEmpty) {
+      //           return 'Please enter a cash amount';
+      //         }
+      //         return null;
+      //       },
+      //       onChanged: (String? newValue) {
+      //         context
+      //             .read<RevenueProvider>()
+      //             .revenueDatas[widget.id]
+      //             .feesPathao = int.parse(newValue!);
+      //       },
+      //     ),
+      //   ),
+      // ),
+      // SizedBox(
+      //   width: isWideScreen(context) ? textFieldWidth : null,
+      //   child: Padding(
+      //     padding: const EdgeInsets.all(8.0),
+      //     child: TextFormField(
+      //       decoration: const InputDecoration(
+      //         labelText: 'Collectible SSLCommerz',
+      //       ),
+      //       controller: collectibleSslcommerzController,
+      //       keyboardType: TextInputType.number,
+      //       inputFormatters: <TextInputFormatter>[
+      //         FilteringTextInputFormatter.digitsOnly
+      //       ],
+      //       validator: (value) {
+      //         if (value == null || value.isEmpty) {
+      //           return 'Please enter a cash amount';
+      //         }
+      //         return null;
+      //       },
+      //       onChanged: (String? newValue) {
+      //         context
+      //             .read<RevenueProvider>()
+      //             .revenueDatas[widget.id]
+      //             .collectibleSslcommerz = int.parse(newValue!);
+      //       },
+      //     ),
+      //   ),
+      // ),
+      // SizedBox(
+      //   width: isWideScreen(context) ? textFieldWidth : null,
+      //   child: Padding(
+      //     padding: const EdgeInsets.all(8.0),
+      //     child: TextFormField(
+      //       decoration: const InputDecoration(
+      //         labelText: 'Fees SSLCommerz',
+      //       ),
+      //       controller: feesSslcommerzController,
+      //       keyboardType: TextInputType.number,
+      //       inputFormatters: <TextInputFormatter>[
+      //         FilteringTextInputFormatter.digitsOnly
+      //       ],
+      //       validator: (value) {
+      //         if (value == null || value.isEmpty) {
+      //           return 'Please enter a cash amount';
+      //         }
+      //         return null;
+      //       },
+      //       onChanged: (String? newValue) {
+      //         context
+      //             .read<RevenueProvider>()
+      //             .revenueDatas[widget.id]
+      //             .feesSslcommerz = int.parse(newValue!);
+      //       },
+      //     ),
+      //   ),
+      // ),
+      // SizedBox(
+      //   width: isWideScreen(context) ? textFieldWidth : null,
+      //   child: Padding(
+      //     padding: const EdgeInsets.all(8.0),
+      //     child: TextFormField(
+      //       decoration: const InputDecoration(
+      //         labelText: 'Warehouse Sales',
+      //       ),
+      //       controller: warehouseSalesController,
+      //       keyboardType: TextInputType.number,
+      //       inputFormatters: <TextInputFormatter>[
+      //         FilteringTextInputFormatter.digitsOnly
+      //       ],
+      //       validator: (value) {
+      //         if (value == null || value.isEmpty) {
+      //           return 'Please enter a cash amount';
+      //         }
+      //         return null;
+      //       },
+      //       onChanged: (String? newValue) {
+      //         context
+      //             .read<RevenueProvider>()
+      //             .revenueDatas[widget.id]
+      //             .warehouseSales = int.parse(newValue!);
+      //       },
+      //     ),
+      //   ),
+      // ),
+      // SizedBox(
+      //   width: isWideScreen(context) ? textFieldWidth : null,
+      //   child: Padding(
+      //     padding: const EdgeInsets.all(8.0),
+      //     child: TextFormField(
+      //       decoration: const InputDecoration(
+      //         labelText: 'Other Income',
+      //       ),
+      //       controller: otherIncomeController,
+      //       keyboardType: TextInputType.number,
+      //       inputFormatters: <TextInputFormatter>[
+      //         FilteringTextInputFormatter.digitsOnly
+      //       ],
+      //       validator: (value) {
+      //         if (value == null || value.isEmpty) {
+      //           return 'Please enter a cash amount';
+      //         }
+      //         return null;
+      //       },
+      //       onChanged: (String? newValue) {
+      //         context
+      //             .read<RevenueProvider>()
+      //             .revenueDatas[widget.id]
+      //             .otherIncome = int.parse(newValue!);
+      //       },
+      //     ),
+      //   ),
+      // ),
+      ...inputFields,
       Padding(
         padding: const EdgeInsets.all(8.0),
         child: ElevatedButton(

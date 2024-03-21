@@ -2,6 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:upturn_dashboard/firebase_options.dart';
+import 'package:upturn_dashboard/provider/revenue_provider.dart';
 import 'package:upturn_dashboard/themes/theme.dart';
 import 'package:url_strategy/url_strategy.dart';
 
@@ -10,6 +11,8 @@ import 'router/go_router.dart';
 SystemUiOverlayStyle systemUiOverlayStyle = const SystemUiOverlayStyle(
   statusBarColor: Colors.transparent,
 );
+
+RevenueProvider revenueProvider = RevenueProvider();
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

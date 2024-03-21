@@ -1,6 +1,9 @@
+import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:upturn_dashboard/functions/date_time_converters.dart';
+import 'package:upturn_dashboard/provider/revenue_provider.dart';
 
 class RevenueListPage extends StatefulWidget {
   const RevenueListPage({super.key});
@@ -79,21 +82,41 @@ class _RevenueListPageState extends State<RevenueListPage> {
                 } else {
                   num totalRevenue = 0;
                   for (var i = 0; i < snapshot.data!.docs.length; i++) {
-                    totalRevenue +=
-                        snapshot.data!.docs[i]['collectibleSteadfast'];
-                    totalRevenue += snapshot.data!.docs[i]['collectiblePathao'];
-                    totalRevenue +=
-                        snapshot.data!.docs[i]['collectibleSslcommerz'];
-                    totalRevenue += snapshot.data!.docs[i]['warehouseSales'];
-                    totalRevenue += snapshot.data!.docs[i]['otherIncome'];
+                    RevenueProvider.collectibles.forEach((key, value) {
+                      totalRevenue += snapshot.data!.docs[i][key];
+                    });
                   }
                   num totalFees = 0;
                   for (var i = 0; i < snapshot.data!.docs.length; i++) {
-                    totalFees += snapshot.data!.docs[i]['feesSteadfast'];
-                    totalFees += snapshot.data!.docs[i]['feesPathao'];
-                    totalFees += snapshot.data!.docs[i]['feesSslcommerz'];
+                    RevenueProvider.fees.forEach((key, value) {
+                      totalFees += snapshot.data!.docs[i][key];
+                    });
                   }
-
+    
+                  List<DataColumn> collectibles = [];
+    
+                  RevenueProvider.collectibles.forEach((key, value) {
+                    collectibles.add(
+                      DataColumn(
+                        label: Text(key),
+                      ),
+                    );
+                  });
+    
+                  List<DataColumn> fees = [];
+                  RevenueProvider.fees.forEach((key, value) {
+                    fees.add(
+                      DataColumn(
+                        label: Text(key),
+                      ),
+                    );
+                  });
+    
+                  log(RevenueProvider
+                      .collectibles['Collectible Steadfast']
+                      .toString());
+                  log(collectibles.length.toString());
+    
                   return Expanded(
                     child: SingleChildScrollView(
                       scrollDirection: Axis.vertical,
@@ -111,40 +134,32 @@ class _RevenueListPageState extends State<RevenueListPage> {
                               fontWeight: FontWeight.bold,
                               fontSize: 17,
                             ),
-                            columns: const <DataColumn>[
-                              DataColumn(
+                            columns: [
+                              const DataColumn(
                                 label: Text('Transaction Date'),
                               ),
-                              DataColumn(
-                                label: Text('Collectible Steadfast'),
-                              ),
-                              DataColumn(
-                                label: Text('Fees Steadfast'),
-                              ),
-                              DataColumn(
-                                label: Text('Collectible Pathao'),
-                              ),
-                              DataColumn(
-                                label: Text('Fees Pathao'),
-                              ),
-                              DataColumn(
-                                label: Text('Collectible SSLCOMMERZ'),
-                              ),
-                              DataColumn(
-                                label: Text('Fees SSLCOMMERZ'),
-                              ),
-                              DataColumn(
-                                label: Text('Warehouse Sales'),
-                              ),
-                              DataColumn(
-                                label: Text('Other Income'),
-                              ),
+                              ...RevenueProvider
+                                  .collectibles
+                                  .keys
+                                  .map<DataColumn>(
+                                    (String key) => DataColumn(
+                                      label: Text(key),
+                                    ),
+                                  ),
+                              ...RevenueProvider
+                                  .fees
+                                  .keys
+                                  .map<DataColumn>(
+                                    (String key) => DataColumn(
+                                      label: Text(key),
+                                    ),
+                                  ),
                             ],
                             rows: [
                               ...snapshot.data!.docs.map<DataRow>(
                                 (DocumentSnapshot document) {
                                   return DataRow(
-                                    cells: <DataCell>[
+                                    cells: [
                                       DataCell(
                                         Text(
                                           formattedDate(
@@ -154,49 +169,26 @@ class _RevenueListPageState extends State<RevenueListPage> {
                                           ),
                                         ),
                                       ),
-                                      DataCell(
-                                        Text(
-                                          document['collectibleSteadfast']
-                                              .toString(),
-                                        ),
-                                      ),
-                                      DataCell(
-                                        Text(
-                                          document['feesSteadfast'].toString(),
-                                        ),
-                                      ),
-                                      DataCell(
-                                        Text(
-                                          document['collectiblePathao']
-                                              .toString(),
-                                        ),
-                                      ),
-                                      DataCell(
-                                        Text(
-                                          document['feesPathao'].toString(),
-                                        ),
-                                      ),
-                                      DataCell(
-                                        Text(
-                                          document['collectibleSslcommerz']
-                                              .toString(),
-                                        ),
-                                      ),
-                                      DataCell(
-                                        Text(
-                                          document['feesSslcommerz'].toString(),
-                                        ),
-                                      ),
-                                      DataCell(
-                                        Text(
-                                          document['warehouseSales'].toString(),
-                                        ),
-                                      ),
-                                      DataCell(
-                                        Text(
-                                          document['otherIncome'].toString(),
-                                        ),
-                                      ),
+                                      ...RevenueProvider
+                                          .collectibles
+                                          .keys
+                                          .map<DataCell>(
+                                            (String key) => DataCell(
+                                              Text(
+                                                document[key].toString(),
+                                              ),
+                                            ),
+                                          ),
+                                      ...RevenueProvider
+                                          .fees
+                                          .keys
+                                          .map<DataCell>(
+                                            (String key) => DataCell(
+                                              Text(
+                                                document[key].toString(),
+                                              ),
+                                            ),
+                                          ),
                                     ],
                                   );
                                 },

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:upturn_dashboard/provider/data_provider.dart';
 import 'package:upturn_dashboard/provider/revenue_provider.dart';
 import 'package:upturn_dashboard/widgets/revenue_row.dart';
 
@@ -20,7 +19,6 @@ class _RevenueEntryPageState extends State<RevenueEntryPage> {
     return MultiProvider(
         providers: [
           ChangeNotifierProvider(create: (context) => RevenueProvider()),
-          ChangeNotifierProvider(create: (context) => DataProvider()),
         ],
         builder: (context, child) {
           final parentContext = context;
@@ -34,7 +32,7 @@ class _RevenueEntryPageState extends State<RevenueEntryPage> {
                   child: Column(
                     children: context
                         .watch<RevenueProvider>()
-                        .revenueRows
+                        .revenueDatas
                         .map((e) => RevenueRow(id: rowCount++))
                         .toList(),
                   ),

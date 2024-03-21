@@ -11,6 +11,7 @@ class DataProvider with ChangeNotifier {
   List<String> _paymentMethods = [];
   List<String> _expenseItems = [];
 
+
   List<String> get paymentMethods => _paymentMethods;
   List<String> get expenseItems => _expenseItems;
 
@@ -35,22 +36,14 @@ class DataProvider with ChangeNotifier {
           .split(',')
           .map((e) => e)
           .toList();
-      notifyListeners();
 
       _expenseItems = data['expenseItems']
           .toString()
           .substring(1, data['expenseItems'].toString().length - 1)
           .split(',')
-          .map((e) {
-        // if (e.contains('#')) {
-        //   String ret = '';
-        //   e.split('#').forEach((element) {
-        //     ret += element;
-        //   });
-        //   return ret;
-        // }
-        return e;
-      }).toList();
+          .map((e) => e)
+          .toList();
+          
       notifyListeners();
     });
   }
