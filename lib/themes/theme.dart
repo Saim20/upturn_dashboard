@@ -9,6 +9,7 @@ InputDecorationTheme inputDecorationTheme = const InputDecorationTheme(
   border: OutlineInputBorder(),
 );
 
+
 ThemeData lightTheme = ThemeData(
   useMaterial3: true,
   brightness: Brightness.light,

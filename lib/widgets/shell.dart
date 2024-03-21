@@ -18,6 +18,7 @@ class _ShellState extends State<Shell> {
   Map<String, Icon> mainDestinations = {
     '/expenses': const Icon(Icons.money_off_csred_outlined),
     '/revenue': const Icon(Icons.attach_money_outlined),
+    '/income': const Icon(Icons.money_outlined),
   };
 
   Map<String, Icon> constantDestinations = {

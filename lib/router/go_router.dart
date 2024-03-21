@@ -1,5 +1,6 @@
 // GoRouter configuration
 import 'package:go_router/go_router.dart';
+import 'package:upturn_dashboard/pages/income/income_monthly.dart';
 import 'package:upturn_dashboard/pages/not_found.dart';
 import 'package:upturn_dashboard/pages/expenses/expenses_entry.dart';
 import 'package:upturn_dashboard/pages/expenses/expenses_list.dart';
@@ -42,6 +43,10 @@ final router = GoRouter(
         GoRoute(
           path: '/revenue/list',
           builder: (context, state) => const RevenueListPage(),
+        ),
+        GoRoute(
+          path: '/income',
+          builder: (context, state) => const MonthlyIncomePage(),
         ),
         GoRoute(
           path: '/settings',
