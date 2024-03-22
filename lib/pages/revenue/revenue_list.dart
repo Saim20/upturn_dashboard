@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:upturn_dashboard/functions/date_time_converters.dart';
 import 'package:upturn_dashboard/provider/revenue_provider.dart';
 
@@ -82,20 +83,20 @@ class _RevenueListPageState extends State<RevenueListPage> {
                 } else {
                   num totalRevenue = 0;
                   for (var i = 0; i < snapshot.data!.docs.length; i++) {
-                    RevenueProvider.collectibles.forEach((key, value) {
+                    context.read<RevenueProvider>().collectibles.forEach((key, value) {
                       totalRevenue += snapshot.data!.docs[i][key];
                     });
                   }
                   num totalFees = 0;
                   for (var i = 0; i < snapshot.data!.docs.length; i++) {
-                    RevenueProvider.fees.forEach((key, value) {
+                    context.read<RevenueProvider>().fees.forEach((key, value) {
                       totalFees += snapshot.data!.docs[i][key];
                     });
                   }
 
                   List<DataColumn> collectibles = [];
 
-                  RevenueProvider.collectibles.forEach((key, value) {
+                  context.read<RevenueProvider>().collectibles.forEach((key, value) {
                     collectibles.add(
                       DataColumn(
                         label: Text(key),
@@ -104,7 +105,7 @@ class _RevenueListPageState extends State<RevenueListPage> {
                   });
 
                   List<DataColumn> fees = [];
-                  RevenueProvider.fees.forEach((key, value) {
+                  context.read<RevenueProvider>().fees.forEach((key, value) {
                     fees.add(
                       DataColumn(
                         label: Text(key),
@@ -112,8 +113,8 @@ class _RevenueListPageState extends State<RevenueListPage> {
                     );
                   });
                   
-                  log(RevenueProvider.fees.keys.toString());
-                  log(RevenueProvider.collectibles.keys.toString());
+                  log(context.read<RevenueProvider>().fees.keys.toString());
+                  log(context.read<RevenueProvider>().collectibles.keys.toString());
 
                   return Expanded(
                     child: SingleChildScrollView(
@@ -139,13 +140,13 @@ class _RevenueListPageState extends State<RevenueListPage> {
                               const DataColumn(
                                 label: Text('Fees SslCommerz'),
                               ),
-                              ...RevenueProvider.collectibles.keys
+                              ...context.read<RevenueProvider>().collectibles.keys
                                   .map<DataColumn>(
                                 (String key) => DataColumn(
                                   label: Text(key),
                                 ),
                               ),
-                              ...RevenueProvider.fees.keys.map<DataColumn>(
+                              ...context.read<RevenueProvider>().fees.keys.map<DataColumn>(
                                 (String key) => DataColumn(
                                   label: Text(key),
                                 ),
@@ -170,7 +171,7 @@ class _RevenueListPageState extends State<RevenueListPage> {
                                           document['Fees SslCommerz'].toString(),
                                         ),
                                       ),
-                                      ...RevenueProvider.collectibles.keys
+                                      ...context.read<RevenueProvider>().collectibles.keys
                                           .map<DataCell>(
                                         (String key) => DataCell(
                                           Text(
@@ -178,7 +179,7 @@ class _RevenueListPageState extends State<RevenueListPage> {
                                           ),
                                         ),
                                       ),
-                                      ...RevenueProvider.fees.keys
+                                      ...context.read<RevenueProvider>().fees.keys
                                           .map<DataCell>(
                                         (String key) => DataCell(
                                           Text(

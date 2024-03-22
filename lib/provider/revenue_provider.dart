@@ -7,11 +7,11 @@ import 'package:upturn_dashboard/data/revenue_data.dart';
 class RevenueProvider with ChangeNotifier {
   final List<RevenueData> _revenueDatas = [];
 
-  static final Map<String, int?> _collectibles = {};
-  static final Map<String, int?> _fees = {};
+  final Map<String, int?> _collectibles = {};
+  final Map<String, int?> _fees = {};
 
-  static Map<String, int?> get collectibles => _collectibles;
-  static Map<String, int?> get fees => _fees;
+  Map<String, int?> get collectibles => _collectibles;
+  Map<String, int?> get fees => _fees;
 
   List<RevenueData> get revenueDatas => _revenueDatas;
 
