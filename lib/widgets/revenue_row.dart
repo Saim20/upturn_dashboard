@@ -67,17 +67,19 @@ class _RevenueRowState extends State<RevenueRow> {
         .collectibles
         .forEach((key, value) {
       collectibleControllers[key] =
-          TextEditingController(text: value.toString());
+          TextEditingController(text: value == null ? '' : value.toString());
     });
     context
         .watch<RevenueProvider>()
         .revenueDatas[widget.id]
         .fees
         .forEach((key, value) {
-      feesControllers[key] = TextEditingController(text: value.toString());
+      feesControllers[key] =
+          TextEditingController(text: value == null ? '' : value.toString());
     });
 
-    double textFieldWidth = (MediaQuery.of(context).size.width - 350) / 8;
+    double textFieldWidth = (MediaQuery.of(context).size.width - 350) /
+        (collectibleControllers.length + feesControllers.length);
     List<Widget> inputFields = [];
 
     collectibleControllers.forEach(
@@ -90,6 +92,7 @@ class _RevenueRowState extends State<RevenueRow> {
               child: TextFormField(
                 decoration: InputDecoration(
                   labelText: key,
+                  floatingLabelBehavior: FloatingLabelBehavior.always,
                 ),
                 controller: value,
                 keyboardType: TextInputType.number,
@@ -123,6 +126,7 @@ class _RevenueRowState extends State<RevenueRow> {
             child: TextFormField(
               decoration: InputDecoration(
                 labelText: key,
+                floatingLabelBehavior: FloatingLabelBehavior.always,
               ),
               controller: value,
               keyboardType: TextInputType.number,
@@ -146,6 +150,20 @@ class _RevenueRowState extends State<RevenueRow> {
         ),
       );
     });
+
+    int toFeesCount = collectibleControllers.length;
+
+    List<Widget> sortedInputFields = [];
+
+    for (var i = 0; i < inputFields.length; i++) {
+      if (i < collectibleControllers.length) {
+        sortedInputFields.add(inputFields[i]);
+      }
+      if (toFeesCount < inputFields.length) {
+        sortedInputFields.add(inputFields[toFeesCount]);
+        toFeesCount++;
+      }
+    }
     // collectiblePathaoController.text = context
     //     .watch<RevenueProvider>()
     //     .revenueDatas[widget.id]
@@ -452,7 +470,7 @@ class _RevenueRowState extends State<RevenueRow> {
       //     ),
       //   ),
       // ),
-      ...inputFields,
+      ...sortedInputFields,
       Padding(
         padding: const EdgeInsets.all(8.0),
         child: ElevatedButton(

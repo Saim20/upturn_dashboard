@@ -92,9 +92,9 @@ class _RevenueListPageState extends State<RevenueListPage> {
                       totalFees += snapshot.data!.docs[i][key];
                     });
                   }
-    
+
                   List<DataColumn> collectibles = [];
-    
+
                   RevenueProvider.collectibles.forEach((key, value) {
                     collectibles.add(
                       DataColumn(
@@ -102,7 +102,7 @@ class _RevenueListPageState extends State<RevenueListPage> {
                       ),
                     );
                   });
-    
+
                   List<DataColumn> fees = [];
                   RevenueProvider.fees.forEach((key, value) {
                     fees.add(
@@ -111,12 +111,10 @@ class _RevenueListPageState extends State<RevenueListPage> {
                       ),
                     );
                   });
-    
-                  log(RevenueProvider
-                      .collectibles['Collectible Steadfast']
-                      .toString());
-                  log(collectibles.length.toString());
-    
+                  
+                  log(RevenueProvider.fees.keys.toString());
+                  log(RevenueProvider.collectibles.keys.toString());
+
                   return Expanded(
                     child: SingleChildScrollView(
                       scrollDirection: Axis.vertical,
@@ -138,22 +136,20 @@ class _RevenueListPageState extends State<RevenueListPage> {
                               const DataColumn(
                                 label: Text('Transaction Date'),
                               ),
-                              ...RevenueProvider
-                                  .collectibles
-                                  .keys
+                              const DataColumn(
+                                label: Text('Fees SslCommerz'),
+                              ),
+                              ...RevenueProvider.collectibles.keys
                                   .map<DataColumn>(
-                                    (String key) => DataColumn(
-                                      label: Text(key),
-                                    ),
-                                  ),
-                              ...RevenueProvider
-                                  .fees
-                                  .keys
-                                  .map<DataColumn>(
-                                    (String key) => DataColumn(
-                                      label: Text(key),
-                                    ),
-                                  ),
+                                (String key) => DataColumn(
+                                  label: Text(key),
+                                ),
+                              ),
+                              ...RevenueProvider.fees.keys.map<DataColumn>(
+                                (String key) => DataColumn(
+                                  label: Text(key),
+                                ),
+                              ),
                             ],
                             rows: [
                               ...snapshot.data!.docs.map<DataRow>(
@@ -169,26 +165,27 @@ class _RevenueListPageState extends State<RevenueListPage> {
                                           ),
                                         ),
                                       ),
-                                      ...RevenueProvider
-                                          .collectibles
-                                          .keys
+                                      DataCell(
+                                        Text(
+                                          document['Fees SslCommerz'].toString(),
+                                        ),
+                                      ),
+                                      ...RevenueProvider.collectibles.keys
                                           .map<DataCell>(
-                                            (String key) => DataCell(
-                                              Text(
-                                                document[key].toString(),
-                                              ),
-                                            ),
+                                        (String key) => DataCell(
+                                          Text(
+                                            document[key].toString(),
                                           ),
-                                      ...RevenueProvider
-                                          .fees
-                                          .keys
+                                        ),
+                                      ),
+                                      ...RevenueProvider.fees.keys
                                           .map<DataCell>(
-                                            (String key) => DataCell(
-                                              Text(
-                                                document[key].toString(),
-                                              ),
-                                            ),
+                                        (String key) => DataCell(
+                                          Text(
+                                            document[key].toString(),
                                           ),
+                                        ),
+                                      ),
                                     ],
                                   );
                                 },

@@ -12,9 +12,11 @@ class ExpenseRow extends StatefulWidget {
   const ExpenseRow({
     super.key,
     required this.id,
+    required this.onDateChanged,
   });
 
   final int id;
+  final Function(DateTime) onDateChanged;
 
   @override
   State<ExpenseRow> createState() => _ExpenseRowState();
@@ -34,22 +36,21 @@ class _ExpenseRowState extends State<ExpenseRow> {
         .watch<ExpensesProvider>()
         .expenseRows[widget.id]
         .transactionDate;
-    _incurredDate = context
-        .watch<ExpensesProvider>()
-        .expenseRows[widget.id]
-        .incurredDate;
+    _incurredDate =
+        context.watch<ExpensesProvider>().expenseRows[widget.id].incurredDate;
     _expenseItem =
         context.watch<ExpensesProvider>().expenseRows[widget.id].expenseItem;
-    _paymentMethod = context
-        .watch<ExpensesProvider>()
-        .expenseRows[widget.id]
-        .paymentMethod;
+    _paymentMethod =
+        context.watch<ExpensesProvider>().expenseRows[widget.id].paymentMethod;
 
-    cashController.text = context
-        .watch<ExpensesProvider>()
-        .expenseRows[widget.id]
-        .amount
-        .toString();
+    cashController.text =
+        context.watch<ExpensesProvider>().expenseRows[widget.id].amount == null
+            ? ''
+            : context
+                .watch<ExpensesProvider>()
+                .expenseRows[widget.id]
+                .amount
+                .toString();
 
     double textFieldWidth = (MediaQuery.of(context).size.width - 815) / 2;
 
@@ -73,8 +74,7 @@ class _ExpenseRowState extends State<ExpenseRow> {
               if (picked != null && picked != _transactionDate) {
                 setState(() {
                   if (_incurredDate!.isAfter(picked)) {
-                    _incurredDate = DateTime(
-                        picked.year, picked.month);
+                    _incurredDate = DateTime(picked.year, picked.month);
                     context
                         .read<ExpensesProvider>()
                         .expenseRows[widget.id]
@@ -84,6 +84,8 @@ class _ExpenseRowState extends State<ExpenseRow> {
                       .read<ExpensesProvider>()
                       .expenseRows[widget.id]
                       .transactionDate = picked;
+
+                  widget.onDateChanged(picked);
                 });
               }
             },
@@ -193,7 +195,7 @@ class _ExpenseRowState extends State<ExpenseRow> {
                 context
                     .read<ExpensesProvider>()
                     .expenseRows[widget.id]
-                    .paymentMethod = newValue;
+                    .paymentMethod = newValue!;
               });
             },
             value: _paymentMethod,
@@ -226,10 +228,8 @@ class _ExpenseRowState extends State<ExpenseRow> {
               return null;
             },
             onChanged: (String? newValue) {
-              context
-                  .read<ExpensesProvider>()
-                  .expenseRows[widget.id]
-                  .amount = int.parse(newValue!);
+              context.read<ExpensesProvider>().expenseRows[widget.id].amount =
+                  int.parse(newValue!);
             },
           ),
         ),

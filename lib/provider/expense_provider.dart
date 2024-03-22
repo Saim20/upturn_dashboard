@@ -5,15 +5,14 @@ import 'package:upturn_dashboard/data/expense_data.dart';
 
 class ExpensesProvider with ChangeNotifier {
   final List<ExpenseData> _expenseRows = [
-    ExpenseData(),
   ];
 
   List<ExpenseData> get expenseRows => _expenseRows;
 
   ExpenseData expenseRow(int n) => _expenseRows[n];
 
-  void addExpenseRow() {
-    _expenseRows.add(ExpenseData());
+  void addExpenseRow(DateTime selectedTransactionDate,String paymentMethod) {
+    _expenseRows.add(ExpenseData(transactionDate: selectedTransactionDate, paymentMethod: paymentMethod));
     notifyListeners();
   }
 

@@ -1,7 +1,7 @@
 class RevenueData {
   DateTime transactionDate;
-  Map<String, int> collectibles;
-  Map<String, int> fees;
+  Map<String, int?> collectibles;
+  Map<String, int?> fees;
 
   RevenueData({
     required this.transactionDate,
