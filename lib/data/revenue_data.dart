@@ -1,13 +1,10 @@
 class RevenueData {
-  DateTime transactionDate = DateTime(
-    DateTime.now().year,
-    DateTime.now().month,
-    DateTime.now().day,
-  );
+  DateTime transactionDate;
   Map<String, int> collectibles;
   Map<String, int> fees;
 
   RevenueData({
+    required this.transactionDate,
     required this.collectibles,
     required this.fees,
   });

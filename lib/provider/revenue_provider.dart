@@ -41,8 +41,9 @@ class RevenueProvider with ChangeNotifier {
     });
   }
 
-  void addRevenueRow() {
+  void addRevenueRow(DateTime transactionDate) {
     _revenueDatas.add(RevenueData(
+        transactionDate: transactionDate,
         collectibles: Map<String, int>.from(_collectibles),
         fees: Map<String, int>.from(_fees)));
     notifyListeners();

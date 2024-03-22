@@ -9,10 +9,12 @@ import '../functions/date_time_converters.dart';
 class RevenueRow extends StatefulWidget {
   const RevenueRow({
     super.key,
+    required this.setSelectedDate,
     required this.id,
   });
 
   final int id;
+  final Function(DateTime) setSelectedDate;
 
   @override
   State<RevenueRow> createState() => _RevenueRowState();
@@ -208,6 +210,7 @@ class _RevenueRowState extends State<RevenueRow> {
                       .read<RevenueProvider>()
                       .revenueDatas[widget.id]
                       .transactionDate = picked;
+                  widget.setSelectedDate(picked);
                 });
               }
             },

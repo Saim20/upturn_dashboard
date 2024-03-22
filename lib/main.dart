@@ -1,7 +1,10 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 import 'package:upturn_dashboard/firebase_options.dart';
+import 'package:upturn_dashboard/provider/data_provider.dart';
+import 'package:upturn_dashboard/provider/expense_provider.dart';
 import 'package:upturn_dashboard/provider/revenue_provider.dart';
 import 'package:upturn_dashboard/themes/theme.dart';
 import 'package:url_strategy/url_strategy.dart';
@@ -11,8 +14,6 @@ import 'router/go_router.dart';
 SystemUiOverlayStyle systemUiOverlayStyle = const SystemUiOverlayStyle(
   statusBarColor: Colors.transparent,
 );
-
-RevenueProvider revenueProvider = RevenueProvider();
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -41,12 +42,19 @@ class MainApp extends StatelessWidget {
     );
     SystemChrome.setSystemUIOverlayStyle(systemUiOverlayStyle);
 
-    return MaterialApp.router(
-      debugShowCheckedModeBanner: false,
-      title: "Upturn Dashboard",
-      theme: lightTheme,
-      darkTheme: darkTheme,
-      routerConfig: router,
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => RevenueProvider()),
+        ChangeNotifierProvider(create: (context) => ExpensesProvider()),
+        ChangeNotifierProvider(create: (context) => DataProvider()),
+      ],
+      builder: (context, child) => MaterialApp.router(
+        debugShowCheckedModeBanner: false,
+        title: "Upturn Dashboard",
+        theme: lightTheme,
+        darkTheme: darkTheme,
+        routerConfig: router,
+      ),
     );
   }
 }
