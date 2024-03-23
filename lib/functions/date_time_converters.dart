@@ -1,5 +1,7 @@
-String monthName(int num){
-  switch(num){
+import 'dart:developer';
+
+String monthName(int num) {
+  switch (num) {
     case 1:
       return 'January';
     case 2:
@@ -29,38 +31,23 @@ String monthName(int num){
   }
 }
 
-DateTime dateTimeFromMonth(String month){
-  DateTime now = DateTime.now();
-  switch(month){
-    case 'January':
-      return DateTime(now.year, 1, now.day);
-    case 'February':
-      return DateTime(now.year, 2, now.day);
-    case 'March':
-      return DateTime(now.year, 3, now.day);
-    case 'April':
-      return DateTime(now.year, 4, now.day);
-    case 'May':
-      return DateTime(now.year, 5, now.day);
-    case 'June':
-      return DateTime(now.year, 6, now.day);
-    case 'July':
-      return DateTime(now.year, 7, now.day);
-    case 'August':
-      return DateTime(now.year, 8, now.day);
-    case 'September':
-      return DateTime(now.year, 9, now.day);
-    case 'October':
-      return DateTime(now.year, 10, now.day);
-    case 'November':
-      return DateTime(now.year, 11, now.day);
-    case 'December':
-      return DateTime(now.year, 12, now.day);
+int numberOfDaysInMonth(int monthNumber, int year) {
+  switch (monthNumber) {
+    case 4:
+    case 6:
+    case 9:
+    case 11:
+      return 30;
+    case 2:
+      return isLeapYear(year) ? 29 : 28;
     default:
-      return DateTime.now();
+      return 31;
   }
 }
 
-String formattedDate(DateTime date){
+bool isLeapYear(int year) =>
+    (year % 4 == 0) && ((year % 100 != 0) || (year % 400 == 0));
+
+String formattedDate(DateTime date) {
   return '${date.day} - ${monthName(date.month)} - ${date.year}';
 }

@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import 'package:upturn_dashboard/data/income_data.dart';
 import 'package:upturn_dashboard/functions/date_time_converters.dart';
 import 'package:upturn_dashboard/provider/data_provider.dart';
+import 'package:upturn_dashboard/provider/revenue_provider.dart';
 
 import '../../functions/responsiveness.dart';
 
@@ -18,7 +19,9 @@ class MonthlyIncomePage extends StatefulWidget {
 }
 
 class _MonthlyIncomePageState extends State<MonthlyIncomePage> {
-  DateTime _month = DateTime(DateTime.now().year, DateTime.now().month);
+  final DateTime _monthInit =
+      DateTime(DateTime.now().year, DateTime.now().month)
+          .subtract(const Duration(days: 10));
 
   bool getData = false;
 
@@ -26,6 +29,7 @@ class _MonthlyIncomePageState extends State<MonthlyIncomePage> {
 
   @override
   Widget build(BuildContext context) {
+    DateTime month = DateTime(_monthInit.year, _monthInit.month);
     return ChangeNotifierProvider(
       create: (context) => DataProvider(),
       child: Form(
@@ -45,18 +49,22 @@ class _MonthlyIncomePageState extends State<MonthlyIncomePage> {
                         FocusScope.of(context).requestFocus(FocusNode());
                         final DateTime? picked = await showMonthPicker(
                           context: context,
-                          initialDate: _month,
+                          initialDate: month,
                           firstDate: DateTime(2022),
-                          lastDate: DateTime.now(),
+                          lastDate: DateTime.now().subtract(
+                            DateTime.now().day >= 30
+                                ? const Duration(days: 32)
+                                : const Duration(days: 30),
+                          ),
                         );
-                        if (picked != null && picked != _month) {
+                        if (picked != null && picked != month) {
                           setState(() {
-                            _month = picked;
+                            month = picked;
                           });
                         }
                       },
                       controller: TextEditingController(
-                        text: formattedDate(_month).substring(3),
+                        text: formattedDate(month).substring(3),
                       ),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
@@ -82,7 +90,7 @@ class _MonthlyIncomePageState extends State<MonthlyIncomePage> {
             ),
             if (getData)
               FutureBuilder(
-                  future: getIncomeDataFromFirestore(_month, context),
+                  future: getIncomeDataFromFirestore(month, context),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return const Column(
@@ -188,24 +196,34 @@ class _MonthlyIncomePageState extends State<MonthlyIncomePage> {
 }
 
 Future<(IncomeData, bool)> getIncomeDataFromFirestore(
-    DateTime month, BuildContext context) async {
+    DateTime startDate, BuildContext context) async {
   // get data from firestore
   // use month to filter data
   try {
-    QuerySnapshot<Map<String, dynamic>> revenueData = await FirebaseFirestore
-        .instance
+    DateTime endDate = startDate.add(Duration(
+        days: numberOfDaysInMonth(startDate.month, startDate.year) - 1));
+
+    QuerySnapshot<Map<String, dynamic>> revenueData;
+    QuerySnapshot<Map<String, dynamic>> expenseData;
+    revenueData = await FirebaseFirestore.instance
         .collection('revenue')
-        .where('transactionDate', isGreaterThanOrEqualTo: month)
-        .where('transactionDate',
-            isLessThanOrEqualTo: month.add(const Duration(days: 30)))
-        .get();
-    QuerySnapshot<Map<String, dynamic>> expenseData = await FirebaseFirestore
-        .instance
+        .where('transactionDate', isGreaterThanOrEqualTo: startDate)
+        .where('transactionDate', isLessThanOrEqualTo: endDate)
+        .get()
+        .then((value) async {
+      log(value.docs.length.toString());
+      return value;
+    });
+
+    expenseData = await FirebaseFirestore.instance
         .collection('expenses')
-        .where('transactionDate', isGreaterThanOrEqualTo: month)
-        .where('transactionDate',
-            isLessThanOrEqualTo: month.add(const Duration(days: 30)))
-        .get();
+        .where('transactionDate', isGreaterThanOrEqualTo: startDate)
+        .where('transactionDate', isLessThanOrEqualTo: endDate)
+        .get()
+        .then((value) {
+      log(value.docs.length.toString());
+      return value;
+    });
 
     num netIncome = 0;
     num totalExpense = 0;
@@ -214,33 +232,14 @@ Future<(IncomeData, bool)> getIncomeDataFromFirestore(
     Map<String, int> perTypeFee = {};
 
     for (var e in revenueData.docs) {
-      totalRevenue += e['collectibleSteadfast'] +
-          e['collectiblePathao'] +
-          e['collectibleSslcommerz'] -
-          e['feesPathao'] -
-          e['feesSteadfast'] -
-          e['feesSslcommerz'] +
-          e['warehouseSales'] +
-          e['otherIncome'];
-
-      if (perTypeFee.containsKey(e['Fees Pathao'])) {
-        perTypeFee['Fees Pathao'] =
-            perTypeFee['Fees Pathao']! + (e['feesPathao'] as num).toInt();
-      } else {
-        perTypeFee['Fees Pathao'] = (e['feesPathao'] as num).toInt();
-      }
-      if (perTypeFee.containsKey(e['Fees Steadfast'])) {
-        perTypeFee['Fees Steadfast'] =
-            perTypeFee['Fees Steadfast']! + (e['feesSteadfast'] as num).toInt();
-      } else {
-        perTypeFee['Fees Steadfast'] = (e['feesSteadfast'] as num).toInt();
-      }
-      if (perTypeFee.containsKey(e['Fees Sslcommerz'])) {
-        perTypeFee['Fees Sslcommerz'] = perTypeFee['Fees Sslcommerz']! +
-            (e['feesSslcommerz'] as num).toInt();
-      } else {
-        perTypeFee['Fees Sslcommerz'] = (e['feesSslcommerz'] as num).toInt();
-      }
+      context.read<RevenueProvider>().collectibles.forEach((key, value) {
+        totalRevenue += e[key];
+        if (perTypeFee.containsKey(e[key])) {
+          perTypeFee[key] = perTypeFee[key]! + (e[key] as num).toInt();
+        } else {
+          perTypeFee[key] = (e[key] as num).toInt();
+        }
+      });
     }
     for (var e in expenseData.docs) {
       totalExpense += e['amount'];

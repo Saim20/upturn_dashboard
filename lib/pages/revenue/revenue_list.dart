@@ -112,9 +112,6 @@ class _RevenueListPageState extends State<RevenueListPage> {
                       ),
                     );
                   });
-                  
-                  log(context.read<RevenueProvider>().fees.keys.toString());
-                  log(context.read<RevenueProvider>().collectibles.keys.toString());
 
                   return Expanded(
                     child: SingleChildScrollView(
