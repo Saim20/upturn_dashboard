@@ -82,6 +82,11 @@ class _RevenueRowState extends State<RevenueRow> {
         (collectibleControllers.length + feesControllers.length);
     List<Widget> inputFields = [];
 
+
+    FocusNode collectibleFocusNode = FocusNode();
+
+    // Keeping track if focus node is added to the first one
+    bool isFocusNodeAdded = false;
     collectibleControllers.forEach(
       (key, value) {
         inputFields.add(
@@ -90,6 +95,7 @@ class _RevenueRowState extends State<RevenueRow> {
             child: Padding(
               padding: const EdgeInsets.all(8.0),
               child: TextFormField(
+                focusNode: !isFocusNodeAdded ? collectibleFocusNode : null,
                 decoration: InputDecoration(
                   labelText: key,
                   floatingLabelBehavior: FloatingLabelBehavior.always,
@@ -115,6 +121,7 @@ class _RevenueRowState extends State<RevenueRow> {
             ),
           ),
         );
+        isFocusNodeAdded = true;
       },
     );
     feesControllers.forEach((key, value) {
@@ -215,7 +222,7 @@ class _RevenueRowState extends State<RevenueRow> {
               labelText: 'Transaction Date',
             ),
             onTap: () async {
-              FocusScope.of(context).requestFocus(FocusNode());
+              FocusScope.of(context).requestFocus(collectibleFocusNode);
               final DateTime? picked = await showDatePicker(
                 context: context,
                 initialDate: _transactionDate ?? DateTime.now(),

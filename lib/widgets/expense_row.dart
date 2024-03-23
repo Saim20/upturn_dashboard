@@ -28,6 +28,8 @@ class _ExpenseRowState extends State<ExpenseRow> {
   String? _expenseItem;
   String? _paymentMethod;
 
+  FocusNode _expenseFocusNode = FocusNode();
+
   final cashController = TextEditingController();
 
   @override
@@ -64,7 +66,7 @@ class _ExpenseRowState extends State<ExpenseRow> {
               labelText: 'Transaction Date',
             ),
             onTap: () async {
-              FocusScope.of(context).requestFocus(FocusNode());
+              FocusScope.of(context).requestFocus(_expenseFocusNode);
               final DateTime? picked = await showDatePicker(
                 context: context,
                 initialDate: _transactionDate ?? DateTime.now(),
@@ -84,6 +86,11 @@ class _ExpenseRowState extends State<ExpenseRow> {
                       .read<ExpensesProvider>()
                       .expenseRows[widget.id]
                       .transactionDate = picked;
+
+                  context
+                      .read<ExpensesProvider>()
+                      .expenseRows[widget.id]
+                      .incurredDate = DateTime(picked.year, picked.month);
 
                   widget.onDateChanged(picked);
                 });
@@ -112,7 +119,7 @@ class _ExpenseRowState extends State<ExpenseRow> {
               labelText: 'Incurred Date',
             ),
             onTap: () async {
-              FocusScope.of(context).requestFocus(FocusNode());
+              FocusScope.of(context).requestFocus(_expenseFocusNode);
               final DateTime? picked = await showMonthPicker(
                 context: context,
                 initialDate: _incurredDate ?? DateTime.now(),
@@ -150,6 +157,7 @@ class _ExpenseRowState extends State<ExpenseRow> {
             decoration: const InputDecoration(
               labelText: 'Expense Item',
             ),
+            focusNode: _expenseFocusNode,
             items:
                 context.watch<DataProvider>().expenseItems.map((String item) {
               return DropdownMenuItem<String>(
