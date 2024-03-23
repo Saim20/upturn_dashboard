@@ -1,9 +1,6 @@
 class ExpenseData {
   DateTime transactionDate;
-  DateTime incurredDate = DateTime(
-    DateTime.now().year,
-    DateTime.now().month,
-  );
+  DateTime incurredDate;
   String? expenseItem;
   String paymentMethod;
   int? amount;
@@ -11,5 +8,6 @@ class ExpenseData {
   ExpenseData({
     required this.paymentMethod,
     required this.transactionDate,
+    required this.incurredDate,
   });
 }

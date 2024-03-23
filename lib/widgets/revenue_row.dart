@@ -25,14 +25,6 @@ class _RevenueRowState extends State<RevenueRow> {
 
   final Map<String, TextEditingController> collectibleControllers = {};
   final Map<String, TextEditingController> feesControllers = {};
-  // final collectiblePathaoController = TextEditingController();
-  // final collectibleSteadfastController = TextEditingController();
-  // final collectibleSslcommerzController = TextEditingController();
-  // final feesPathaoController = TextEditingController();
-  // final feesSteadfastController = TextEditingController();
-  // final feesSslcommerzController = TextEditingController();
-  // final warehouseSalesController = TextEditingController();
-  // final otherIncomeController = TextEditingController();
 
   @override
   void initState() {
@@ -171,47 +163,6 @@ class _RevenueRowState extends State<RevenueRow> {
         toFeesCount++;
       }
     }
-    // collectiblePathaoController.text = context
-    //     .watch<RevenueProvider>()
-    //     .revenueDatas[widget.id]
-    //     .collectiblePathao
-    //     .toString();
-    // collectibleSteadfastController.text = context
-    //     .watch<RevenueProvider>()
-    //     .revenueDatas[widget.id]
-    //     .collectibleSteadfast
-    //     .toString();
-    // collectibleSslcommerzController.text = context
-    //     .watch<RevenueProvider>()
-    //     .revenueDatas[widget.id]
-    //     .collectibleSslcommerz
-    //     .toString();
-    // feesPathaoController.text = context
-    //     .watch<RevenueProvider>()
-    //     .revenueDatas[widget.id]
-    //     .feesPathao
-    //     .toString();
-    // feesSteadfastController.text = context
-    //     .watch<RevenueProvider>()
-    //     .revenueDatas[widget.id]
-    //     .feesSteadfast
-    //     .toString();
-    // feesSslcommerzController.text = context
-    //     .watch<RevenueProvider>()
-    //     .revenueDatas[widget.id]
-    //     .feesSslcommerz
-    //     .toString();
-    // warehouseSalesController.text = context
-    //     .watch<RevenueProvider>()
-    //     .revenueDatas[widget.id]
-    //     .warehouseSales
-    //     .toString();
-    // otherIncomeController.text = context
-    //     .watch<RevenueProvider>()
-    //     .revenueDatas[widget.id]
-    //     .otherIncome
-    //     .toString();
-
     List<Widget> contents = [
       SizedBox(
         width: isWideScreen(context) ? 200 : null,
