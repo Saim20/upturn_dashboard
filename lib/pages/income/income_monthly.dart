@@ -138,15 +138,13 @@ class _MonthlyIncomePageState extends State<MonthlyIncomePage> {
                       DataRow(
                         cells: [
                           const DataCell(Text('Fees SslCommerz')),
-                          DataCell(Text((snapshot
-                              .data!.perTypeFee['Fees SslCommerz'] ?? 0)
-                              .toString())),
+                          DataCell(Text(
+                              (snapshot.data!.perTypeFee['Fees SslCommerz'] ??
+                                      0)
+                                  .toString())),
                         ],
                       ),
                     );
-
-                    log(snapshot.data!.perItemExpense.toString());
-                    log(DataProvider.expenseItems.toString());
 
                     return Expanded(
                       child: SingleChildScrollView(
@@ -168,18 +166,18 @@ class _MonthlyIncomePageState extends State<MonthlyIncomePage> {
                                     fontSize: 17,
                                   ),
                                   columns: const [
-                                    DataColumn(label: Text('Net Income')),
-                                    DataColumn(label: Text('Total Expense')),
                                     DataColumn(label: Text('Total Revenue')),
+                                    DataColumn(label: Text('Total Expense')),
+                                    DataColumn(label: Text('Net Income')),
                                   ],
                                   rows: [
                                     DataRow(cells: [
                                       DataCell(Text(
-                                          'Net Income: ${snapshot.data!.netIncome}')),
+                                          'Total Revenue: ${snapshot.data!.totalRevenue}')),
                                       DataCell(Text(
                                           'Total Expense: ${snapshot.data!.totalExpense}')),
                                       DataCell(Text(
-                                          'Total Revenue: ${snapshot.data!.totalRevenue}')),
+                                          'Net Income: ${snapshot.data!.netIncome}')),
                                     ]),
                                   ],
                                 ),
@@ -200,27 +198,43 @@ class _MonthlyIncomePageState extends State<MonthlyIncomePage> {
                                         fontSize: 17,
                                       ),
                                       columns: const [
-                                        DataColumn(label: Text('Expense Items')),
-                                        DataColumn(label: Text('Expense Amount')),
+                                        DataColumn(
+                                            label: Text('Expense Items')),
+                                        DataColumn(
+                                            label: Text('Expense Amount')),
                                       ],
                                       rows: [
-                                        ...DataProvider
-                                            .expenseItems
-                                            .map(
-                                              (e) => DataRow(
-                                                cells: [
-                                                  DataCell(Text(e)),
-                                                  DataCell(
-                                                    Text(
-                                                      (snapshot.data!.perItemExpense[
-                                                                  e] ??
-                                                              0)
-                                                          .toString(),
-                                                    ),
-                                                  ),
-                                                ],
+                                        ...DataProvider.expenseItems.map(
+                                          (e) => DataRow(
+                                            cells: [
+                                              DataCell(Text(e)),
+                                              DataCell(
+                                                Text(
+                                                  (snapshot.data!.perItemExpense[
+                                                              e] ??
+                                                          0)
+                                                      .toString(),
+                                                ),
                                               ),
+                                            ],
+                                          ),
+                                        ),
+                                        DataRow(cells: [
+                                          const DataCell(Text('Total:')),
+                                          DataCell(
+                                            Text(
+                                              snapshot
+                                                  .data!.perItemExpense.values
+                                                  .fold(
+                                                      0,
+                                                      (previousValue,
+                                                              element) =>
+                                                          previousValue +
+                                                          element)
+                                                  .toString(),
                                             ),
+                                          ),
+                                        ])
                                       ],
                                     ),
                                   ),
@@ -237,11 +251,30 @@ class _MonthlyIncomePageState extends State<MonthlyIncomePage> {
                                         fontSize: 17,
                                       ),
                                       columns: const [
-                                        DataColumn(label: Text('Collectible Type')),
+                                        DataColumn(
+                                            label: Text('Collectible Type')),
                                         DataColumn(
                                             label: Text('Collectible Amount')),
                                       ],
-                                      rows: collectibleRows,
+                                      rows: [
+                                        ...collectibleRows,
+                                        DataRow(cells: [
+                                          const DataCell(Text('Total:')),
+                                          DataCell(
+                                            Text(
+                                              snapshot.data!.perTypeCollectible
+                                                  .values
+                                                  .fold(
+                                                      0,
+                                                      (previousValue,
+                                                              element) =>
+                                                          previousValue +
+                                                          element)
+                                                  .toString(),
+                                            ),
+                                          ),
+                                        ])
+                                      ],
                                     ),
                                   ),
                                   Padding(
@@ -260,7 +293,24 @@ class _MonthlyIncomePageState extends State<MonthlyIncomePage> {
                                         DataColumn(label: Text('Fee Type')),
                                         DataColumn(label: Text('Fee Amount')),
                                       ],
-                                      rows: feeRows,
+                                      rows: [
+                                        ...feeRows,
+                                        DataRow(cells: [
+                                          const DataCell(Text('Total:')),
+                                          DataCell(
+                                            Text(
+                                              snapshot.data!.perTypeFee.values
+                                                  .fold(
+                                                      0,
+                                                      (previousValue,
+                                                              element) =>
+                                                          previousValue +
+                                                          element)
+                                                  .toString(),
+                                            ),
+                                          ),
+                                        ])
+                                      ],
                                     ),
                                   ),
                                 ],
@@ -316,7 +366,7 @@ Future<IncomeData?> getIncomeDataFromFirestore(
     // ignore: use_build_context_synchronously
     for (var collectible in DataProvider.collectibles) {
       totalRevenue += e[collectible];
-      if (perTypeCollectible.containsKey(e[collectible])) {
+      if (perTypeCollectible.containsKey(collectible)) {
         perTypeCollectible[collectible] =
             perTypeCollectible[collectible]! + (e[collectible] as num).toInt();
       } else {
@@ -325,8 +375,8 @@ Future<IncomeData?> getIncomeDataFromFirestore(
     }
     // ignore: use_build_context_synchronously
     for (var fee in DataProvider.fees) {
-      totalRevenue += e[fee];
-      if (perTypeFee.containsKey(e[fee])) {
+      totalExpense += e[fee];
+      if (perTypeFee.containsKey(fee)) {
         perTypeFee[fee] = perTypeFee[fee]! + (e[fee] as num).toInt();
       } else {
         perTypeFee[fee] = (e[fee] as num).toInt();
