@@ -28,7 +28,7 @@ class _ExpenseRowState extends State<ExpenseRow> {
   String? _expenseItem;
   String? _paymentMethod;
 
-  FocusNode _expenseFocusNode = FocusNode();
+  final FocusNode _expenseFocusNode = FocusNode();
 
   final cashController = TextEditingController();
 
@@ -159,7 +159,7 @@ class _ExpenseRowState extends State<ExpenseRow> {
             ),
             focusNode: _expenseFocusNode,
             items:
-                context.watch<DataProvider>().expenseItems.map((String item) {
+                DataProvider.expenseItems.map((String item) {
               return DropdownMenuItem<String>(
                 value: item,
                 child: Text(item),
@@ -192,7 +192,7 @@ class _ExpenseRowState extends State<ExpenseRow> {
               labelText: 'Payment Method',
             ),
             items:
-                context.watch<DataProvider>().paymentMethods.map((String item) {
+                DataProvider.paymentMethods.map((String item) {
               return DropdownMenuItem<String>(
                 value: item,
                 child: Text(item),

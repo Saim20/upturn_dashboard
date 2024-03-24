@@ -48,13 +48,17 @@ class MainApp extends StatelessWidget {
         ChangeNotifierProvider(create: (context) => ExpensesProvider()),
         ChangeNotifierProvider(create: (context) => DataProvider()),
       ],
-      builder: (context, child) => MaterialApp.router(
+      builder: (context, child) {
+        context.read<DataProvider>().initialize();
+
+        return MaterialApp.router(
         debugShowCheckedModeBanner: false,
         title: "Upturn Dashboard",
         theme: lightTheme,
         darkTheme: darkTheme,
         routerConfig: router,
-      ),
+      );
+      },
     );
   }
 }

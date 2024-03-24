@@ -1,53 +1,34 @@
-import 'dart:developer';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:upturn_dashboard/data/revenue_data.dart';
+import 'package:upturn_dashboard/provider/data_provider.dart';
 
 class RevenueProvider with ChangeNotifier {
   final List<RevenueData> _revenueDatas = [];
 
-  final Map<String, int?> _collectibles = {};
-  final Map<String, int?> _fees = {};
 
-  Map<String, int?> get collectibles => _collectibles;
-  Map<String, int?> get fees => _fees;
 
   List<RevenueData> get revenueDatas => _revenueDatas;
+  
 
   RevenueData expenseRow(int n) => _revenueDatas[n];
 
-  RevenueProvider() {
-    FirebaseFirestore.instance
-        .collection('data')
-        .doc('options')
-        .get()
-        .then((value) {
-      Map<String, dynamic> data = value.data()!;
-
-      data['collectibles']
-          .toString()
-          .substring(1, data['collectibles'].toString().length - 1)
-          .split(',')
-          .forEach((element) {
-        _collectibles[element.trim()] = null;
-      });
-
-      data['fees']
-          .toString()
-          .substring(1, data['fees'].toString().length - 1)
-          .split(',')
-          .forEach((element) {
-        _fees[element.trim()] = null;
-      });
-    });
-  }
-
   void addRevenueRow(DateTime transactionDate) {
-    _revenueDatas.add(RevenueData(
+    Map<String, int?> collectiblesMap = {};
+    Map<String, int?> feesMap = {};
+    for (var element in DataProvider.collectibles) {
+      collectiblesMap[element] = null;
+    }
+    for (var element in DataProvider.fees) {
+      feesMap[element] = null;
+    }
+    _revenueDatas.add(
+      RevenueData(
         transactionDate: transactionDate,
-        collectibles: Map<String, int?>.from(_collectibles),
-        fees: Map<String, int?>.from(_fees)));
+        collectibles: collectiblesMap,
+        fees: feesMap,
+      ),
+    );
     notifyListeners();
   }
 
@@ -67,7 +48,6 @@ class RevenueProvider with ChangeNotifier {
         fees[key] = value ?? 0;
       });
 
-      log(collectibles.toString().substring(35));
       await FirebaseFirestore.instance.collection('revenue').add({
         'transactionDate': e.transactionDate,
         ...collectibles,

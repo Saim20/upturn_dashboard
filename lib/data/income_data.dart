@@ -3,10 +3,14 @@ class IncomeData {
   int totalExpense;
   int totalRevenue;
   Map<String, int> perItemExpense;
+  Map<String, int> perTypeCollectible;
+  Map<String, int> perTypeFee;
 
   IncomeData(
-      {this.netIncome = 0,
-      this.totalExpense = 0,
-      this.totalRevenue = 0,
-      this.perItemExpense = const {}});
+      {required this.netIncome,
+      required this.totalExpense,
+      required this.totalRevenue,
+      required this.perItemExpense,
+      required this.perTypeCollectible,
+      required this.perTypeFee});
 }

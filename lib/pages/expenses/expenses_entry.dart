@@ -56,7 +56,7 @@ class _ExpenseEntryPageState extends State<ExpenseEntryPage> {
                 onPressed: () {
                   context.read<ExpensesProvider>().addExpenseRow(
                       selectedTransactionDate,
-                      context.read<DataProvider>().paymentMethods[1]);
+                      DataProvider.paymentMethods[1]);
                 },
                 child: const Text('Add Row'),
               ),
