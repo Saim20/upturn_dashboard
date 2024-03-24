@@ -138,8 +138,8 @@ class _MonthlyIncomePageState extends State<MonthlyIncomePage> {
                       DataRow(
                         cells: [
                           const DataCell(Text('Fees SslCommerz')),
-                          DataCell(Text(snapshot
-                              .data!.perTypeFee['Fees SslCommerz']
+                          DataCell(Text((snapshot
+                              .data!.perTypeFee['Fees SslCommerz'] ?? 0)
                               .toString())),
                         ],
                       ),
